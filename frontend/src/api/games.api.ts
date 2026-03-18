@@ -1,0 +1,38 @@
+import type { CreateGameResponse, SimulateGameResponse } from '../types/api.types';
+import type { Game } from '../types/game.types';
+import type { Player } from '../types/player.types';
+import type { Property } from '../types/property.types';
+import type { Turn } from '../types/turn.types';
+import { request } from './client';
+
+export const createGame = () => {
+  return request<CreateGameResponse>('/games', {
+    method: 'POST',
+  });
+};
+
+export const simulateGame = (gameId: string) => {
+  return request<SimulateGameResponse>(`/games/${gameId}/simulate`, {
+    method: 'POST',
+  });
+};
+
+export const fetchGames = () => {
+  return request<Game[]>('/games');
+};
+
+export const fetchGameById = (gameId: string) => {
+  return request<Game>(`/games/${gameId}`);
+};
+
+export const fetchPlayersByGameId = (gameId: string) => {
+  return request<Player[]>(`/games/${gameId}/players`);
+};
+
+export const fetchPropertiesByGameId = (gameId: string) => {
+  return request<Property[]>(`/games/${gameId}/properties`);
+};
+
+export const fetchTurnsByGameId = (gameId: string) => {
+  return request<Turn[]>(`/games/${gameId}/turns`);
+};
