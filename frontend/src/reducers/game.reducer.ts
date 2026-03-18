@@ -34,6 +34,16 @@ export const gameReducer = (state: GameState, action: GameAction): GameState => 
         error: null,
       };
 
+    case 'SET_GAME_DETAILS':
+      return {
+        ...state,
+        game: action.payload.game,
+        players: action.payload.players,
+        properties: action.payload.properties,
+        turns: action.payload.turns,
+        error: null,
+      };
+
     case 'SET_GAME_HISTORY':
       return {
         ...state,
