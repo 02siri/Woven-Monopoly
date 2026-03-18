@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import connectToDatabase from './config/database';
 import loadBoardIntoDatabase from './loaders/board.loader';
+import gamesRoutes from './routes/games.routes';
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ app.get('/api/v1/health', (_req, res) => {
     message: 'Woven Monopoly backend successfully running',
   });
 });
+
+app.use('/v1', gamesRoutes);
 
 const startServer = async () => {
   await connectToDatabase();
