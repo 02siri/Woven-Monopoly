@@ -7,7 +7,7 @@ import {
   getPropertiesByGameId,
   simulateGame,
   getTurnsByGameId,
-} from '../services/games.service';
+} from '../services/games';
 
 const getGameIdParam = (gameId: string | string[] | undefined) => {
   if (!gameId || Array.isArray(gameId)) {

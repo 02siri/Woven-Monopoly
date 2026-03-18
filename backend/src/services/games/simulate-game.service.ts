@@ -1,33 +1,11 @@
-import BoardsModel from '../models/boards.model';
-import GamesModel from '../models/games.model';
-import PlayersModel from '../models/players.model';
-import PropertiesModel from '../models/properties.model';
-import TurnsModel from '../models/turns.model';
+import BoardsModel from '../../models/boards.model';
+import GamesModel from '../../models/games.model';
+import TurnsModel from '../../models/turns.model';
 import {
   getRollSetByKey,
-  getRollSetForGameNumber,
   type RollSetKey,
-} from '../loaders/rollsets.loader';
-
-const DEFAULT_PLAYERS = [
-  { name: 'Peter', turnOrder: 1 },
-  { name: 'Billy', turnOrder: 2 },
-  { name: 'Charlotte', turnOrder: 3 },
-  { name: 'Sweedal', turnOrder: 4 },
-];
-
-const getBoardOrThrow = async () => {
-  const board = await BoardsModel.findOne({
-    name: 'Woven Monopoly',
-    version: 'v1',
-  });
-
-  if (!board) {
-    throw new Error('Board not found. Please load the board before creating a game.');
-  }
-
-  return board;
-};
+} from '../../loaders/rollsets.loader';
+import { getPlayersByGameId, getPropertiesByGameId } from './read-games.service';
 
 const hasMonopolyForColour = (
   ownerId: string,
@@ -67,86 +45,7 @@ const getWinner = (players: Awaited<ReturnType<typeof getPlayersByGameId>>) => {
   })[0];
 };
 
-const createGame = async () => {
-  const latestGame = await GamesModel.findOne().sort({ gameNumber: -1 });
-  const gameNumber = latestGame ? latestGame.gameNumber + 1 : 1;
-  const rollSetUsed = getRollSetForGameNumber(gameNumber);
-
-  const board = await getBoardOrThrow();
-
-  const game = await GamesModel.create({
-    gameNumber,
-    boardId: board._id,
-    rollSetUsed,
-    status: 'IN_PROGRESS',
-    currentTurn: 1,
-  });
-
-  const players = await PlayersModel.insertMany(
-    DEFAULT_PLAYERS.map((player) => ({
-      gameId: game._id,
-      name: player.name,
-      turnOrder: player.turnOrder,
-      balance: 16,
-      positionIndex: 0,
-      isActive: true,
-      isBankrupt: false,
-      lastAction: 'Game started',
-      lastActionAt: new Date(),
-    }))
-  );
-
-  const firstPlayer = players.find((player) => player.turnOrder === 1);
-
-  if (!firstPlayer) {
-    throw new Error('Failed to determine the first player.');
-  }
-
-  game.currentPlayerId = firstPlayer._id;
-  await game.save();
-
-  const propertySpaces = board.spaces.filter((space) => space.type === 'property');
-
-  const properties = await PropertiesModel.insertMany(
-    propertySpaces.map((space) => ({
-      gameId: game._id,
-      boardSpaceIndex: space.index,
-      name: space.name,
-      colour: space.colour,
-      price: space.price,
-      owner: null,
-      baseRent: (space.price ?? 0) + 3,
-    }))
-  );
-
-  return {
-    game,
-    players,
-    properties,
-  };
-};
-
-const getGames = async () => {
-  return GamesModel.find().sort({ gameNumber: -1 });
-};
-
-const getGameById = async (gameId: string) => {
-  return GamesModel.findById(gameId);
-};
-
-const getPlayersByGameId = async (gameId: string) => {
-  return PlayersModel.find({ gameId }).sort({ turnOrder: 1 });
-};
-
-const getPropertiesByGameId = async (gameId: string) => {
-  return PropertiesModel.find({ gameId }).sort({ boardSpaceIndex: 1 });
-};
-
-const getTurnsByGameId = async (gameId: string) => {
-  return TurnsModel.find({ gameId }).sort({ turnNumber: 1 });
-};
-
-const simulateGame = async (gameId: string) => {
+export const simulateGame = async (gameId: string) => {
   const game = await GamesModel.findById(gameId);
 
   if (!game) {
@@ -203,7 +102,7 @@ const simulateGame = async (gameId: string) => {
       activePlayer.balance += 1;
       transactionAmount += 1;
       actionType = 'PASS_GO';
-      noteParts.push('Passed GO and received $1');
+      noteParts.push(`${activePlayer.name} passed GO and received $1`);
     }
 
     if (landedSpace.type === 'property') {
@@ -222,7 +121,7 @@ const simulateGame = async (gameId: string) => {
         transactionAmount -= property.price;
         property.owner = activePlayer._id;
         actionType = 'BUY_PROPERTY';
-        noteParts.push(`Bought ${property.name} for $${property.price}`);
+        noteParts.push(`${activePlayer.name} bought ${property.name} for $${property.price}`);
       } else if (property.owner.toString() !== activePlayer._id.toString()) {
         const owner = players.find(
           (player) => player._id.toString() === property.owner?.toString()
@@ -241,13 +140,13 @@ const simulateGame = async (gameId: string) => {
         transactionAmount -= effectiveRent;
         actionType = 'PAY_RENT';
         noteParts.push(
-          `Paid $${effectiveRent} rent to ${owner.name} for ${property.name}`
+          `${activePlayer.name} paid $${effectiveRent} rent to ${owner.name} for ${property.name}`
         );
       } else {
-        noteParts.push(`Landed on owned property ${property.name}`);
+        noteParts.push(`${activePlayer.name} Landed on owned property ${property.name}`);
       }
     } else {
-      noteParts.push(`Moved to ${landedSpace.name}`);
+      noteParts.push(`${activePlayer.name} Moved to ${landedSpace.name}`);
     }
 
     if (activePlayer.balance < 0) {
@@ -255,7 +154,7 @@ const simulateGame = async (gameId: string) => {
       activePlayer.isBankrupt = true;
       activePlayer.isActive = false;
       actionType = 'BANKRUPT';
-      noteParts.push('Became bankrupt');
+      noteParts.push(`${activePlayer.name} became bankrupt`);
       gameEndedByBankruptcy = true;
     }
 
@@ -306,14 +205,4 @@ const simulateGame = async (gameId: string) => {
     turns: turnsToCreate,
     winner,
   };
-};
-
-export {
-  createGame,
-  getGameById,
-  getGames,
-  getPlayersByGameId,
-  getPropertiesByGameId,
-  simulateGame,
-  getTurnsByGameId,
 };
