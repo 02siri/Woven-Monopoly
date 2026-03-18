@@ -10,7 +10,7 @@ const gamesSchema = new Schema(
     },
     boardId: {
       type: Types.ObjectId,
-      ref: 'Board',
+      ref: 'Boards',
       required: true,
     },
     rollSetUsed: {
@@ -32,12 +32,12 @@ const gamesSchema = new Schema(
     },
     currentPlayerId: {
       type: Types.ObjectId,
-      ref: 'Player',
+      ref: 'Players',
       default: null,
     },
     winnerPlayerId: {
       type: Types.ObjectId,
-      ref: 'Player',
+      ref: 'Players',
       default: null,
     },
     startedAt: {
