@@ -10,11 +10,15 @@ const database_1 = __importDefault(require("./config/database"));
 dotenv_1.default.config();
 const PORT = process.env.PORT || 5000;
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: [
+        "http://localhost:5000",
+    ],
+    credentials: true,
+}));
 app.use(express_1.default.json());
 app.get('/api/v1/health', (_req, res) => {
     res.status(200).json({
-        status: 'ok',
         message: 'Woven Monopoly backend successfully running',
     });
 });

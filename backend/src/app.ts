@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import connectToDatabase from './config/database';
+import loadBoardIntoDatabase from './loaders/board.loader';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.get('/api/v1/health', (_req, res) => {
 
 const startServer = async () => {
   await connectToDatabase();
+  await loadBoardIntoDatabase();
 
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
