@@ -6,7 +6,7 @@ const rollSets = {
   rolls_2: rolls2,
 };
 
-type RollSetKey = 'rolls_1' | 'rolls_2';
+export type RollSetKey = 'rolls_1' | 'rolls_2';
 
 export const getRollSetByKey = (key: RollSetKey) => {
   return [...rollSets[key]];
