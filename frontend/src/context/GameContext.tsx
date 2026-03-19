@@ -36,6 +36,15 @@ export type GameAction =
       };
     }
   | {
+      action: 'SET_TURN_RESULT';
+      payload: {
+        game: Game;
+        players: Player[];
+        properties: Property[];
+        turn: Turn;
+      };
+    }
+  | {
       action: 'SET_GAME_DETAILS';
       payload: {
         game: Game;
