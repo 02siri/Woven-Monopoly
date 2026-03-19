@@ -34,6 +34,113 @@ button {
   padding: 24px;
 }
 
+.landing-page {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  gap: 28px;
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.landing-hero {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 14px;
+  padding: 22px 16px 8px;
+}
+
+.landing-hero h1 {
+  margin: 0;
+  font-size: clamp(4rem, 11vw, 6.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.landing-copy {
+  margin: 0;
+  max-width: 780px;
+  font-size: clamp(1.15rem, 2vw, 1.6rem);
+  line-height: 1.45;
+  color: #566477;
+}
+
+.landing-start-button {
+  min-width: 260px;
+  min-height: 78px;
+  margin-top: 10px;
+  font-size: 1.1rem;
+}
+
+.landing-error {
+  margin: 0;
+}
+
+.landing-panel {
+  padding: 30px 36px;
+}
+
+.previous-games-panel {
+  min-height: 320px;
+}
+
+.landing-history-list {
+  margin-top: 20px;
+}
+
+.history-table {
+  display: grid;
+  gap: 12px;
+}
+
+.history-table-header {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0 16px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a6a2f;
+}
+
+.landing-empty-state {
+  min-height: 210px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #637086;
+}
+
+.landing-empty-state p {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.landing-empty-state span {
+  display: block;
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+.rules-panel {
+  background: rgba(232, 241, 255, 0.72);
+  border-color: rgba(111, 158, 255, 0.28);
+}
+
+.rules-list {
+  margin: 18px 0 0;
+  padding-left: 24px;
+  display: grid;
+  gap: 14px;
+  color: #39495f;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
 .panel,
 .control-card,
 .card,
@@ -728,6 +835,10 @@ button {
   color: #403424;
 }
 
+.history-item-static {
+  cursor: default;
+}
+
 .clickable-item {
   cursor: pointer;
   transition: background 120ms ease, transform 120ms ease;
@@ -884,6 +995,18 @@ button {
     padding: 16px;
   }
 
+  .landing-page {
+    padding-top: 28px;
+  }
+
+  .landing-hero h1 {
+    font-size: clamp(3rem, 18vw, 4.8rem);
+  }
+
+  .landing-panel {
+    padding: 22px;
+  }
+
   .page-header,
   .stage-heading,
   .panel-header {
@@ -895,7 +1018,8 @@ button {
   .turn-stats,
   .board-center-stats,
   .metric-grid,
-  .history-item {
+  .history-item,
+  .history-table-header {
     grid-template-columns: 1fr;
   }
 
