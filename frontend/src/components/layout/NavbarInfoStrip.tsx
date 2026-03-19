@@ -20,10 +20,6 @@ const NavbarInfoStrip = ({
         <strong>{gameNumber ? `#${gameNumber}` : '-'}</strong>
       </div>
       <div className="info-pill">
-        <span className="info-label">Roll Set</span>
-        <strong>{rollSetUsed ?? '-'}</strong>
-      </div>
-      <div className="info-pill">
         <span className="info-label">Players</span>
         <strong>{playerCount}</strong>
       </div>

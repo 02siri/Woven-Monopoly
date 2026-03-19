@@ -66,20 +66,9 @@ const GameRoom = ({
       <section className="hero-shell panel">
         <header className="page-header">
           <div>
-            <p className="eyebrow">Woven Monopoly</p>
-            <h1>Board-first game room</h1>
-            <p className="hero-copy">
-              Create a deterministic game, then resolve turns one by one with a richer
-              board, color-coded players, and a live event log.
-            </p>
+            <h1>Woven Monopoly</h1>
+            
           </div>
-          <button
-            className="primary-button start-game-button"
-            onClick={onCreateGame}
-            disabled={loading || !canCreateGame}
-          >
-            {loading && !game ? 'Creating...' : 'Start Game'}
-          </button>
         </header>
 
         <NavbarInfoStrip
@@ -209,35 +198,6 @@ const GameRoom = ({
 
           <GameLogPanel turns={turns} players={players} />
         </aside>
-      </section>
-
-      <section className="history-footer panel">
-        <div className="panel-header">
-          <h2>Saved Games</h2>
-          <button className="text-button" onClick={onRefreshGameHistory}>
-            Refresh
-          </button>
-        </div>
-
-        {games.length > 0 ? (
-          <ul className="history-list">
-            {games.map((historyGame) => (
-              <li
-                key={historyGame._id}
-                className="history-item clickable-item"
-                onClick={() => {
-                  onLoadGameDetails(historyGame._id);
-                }}
-              >
-                <span>Game {historyGame.gameNumber}</span>
-                <span>{historyGame.rollSetUsed}</span>
-                <span>{historyGame.status.replace(/_/g, ' ')}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="muted-text">No saved games yet.</p>
-        )}
       </section>
 
       {selectedProperty ? (
