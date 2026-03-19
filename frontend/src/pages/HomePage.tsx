@@ -226,6 +226,12 @@ const HomePage = () => {
     }
   };
 
+  const handleExitGame = async () => {
+    setSelectedProperty(null);
+    setShowGameRoom(false);
+    await loadGameHistory();
+  };
+
   const startTurnLabel = turns.length === 0 ? 'Start' : 'Play Turn';
   const canCreateGame = !game || game.status !== 'IN_PROGRESS';
   const showBoard = properties.length > 0;
@@ -336,6 +342,9 @@ const HomePage = () => {
       }}
       onResolveTurn={() => {
         void handleResolveTurn();
+      }}
+      onExitGame={() => {
+        void handleExitGame();
       }}
       onRefreshGameHistory={() => {
         void loadGameHistory();

@@ -33,6 +33,7 @@ type GameRoomProps = {
   showBoard: boolean;
   onCreateGame: () => void;
   onResolveTurn: () => void;
+  onExitGame: () => void;
   onRefreshGameHistory: () => void;
   onLoadGameDetails: (gameId: string) => void;
   onSelectProperty: (property: Property | null) => void;
@@ -57,10 +58,13 @@ const GameRoom = ({
   showBoard,
   onCreateGame,
   onResolveTurn,
+  onExitGame,
   onRefreshGameHistory,
   onLoadGameDetails,
   onSelectProperty,
 }: GameRoomProps) => {
+  const isGameOver = Boolean(game && game.status !== 'IN_PROGRESS');
+
   return (
     <main className="monopoly-page">
       <section className="hero-shell panel">
@@ -184,13 +188,15 @@ const GameRoom = ({
               the game engine.
             </p>
 
-            <button
-              className="primary-button play-turn-button"
-              onClick={onResolveTurn}
-              disabled={loading || !game || game.status !== 'IN_PROGRESS'}
-            >
-              {loading && game ? 'Working...' : startTurnLabel}
-            </button>
+            {!isGameOver ? (
+              <button
+                className="primary-button play-turn-button"
+                onClick={onResolveTurn}
+                disabled={loading || !game || game.status !== 'IN_PROGRESS'}
+              >
+                {loading && game ? 'Working...' : startTurnLabel}
+              </button>
+            ) : null}
 
             {winner ? <p className="winner-banner">Winner: {winner.name}</p> : null}
             {error ? <p className="error-text compact-error">{error}</p> : null}
@@ -208,6 +214,20 @@ const GameRoom = ({
           properties={properties}
           onClose={() => onSelectProperty(null)}
         />
+      ) : null}
+
+      {isGameOver ? (
+        <div className="game-over-backdrop" role="presentation">
+          <section className="game-over-modal" role="dialog" aria-modal="true">
+            <h2>Game Over!</h2>
+            <p>
+              {winner ? `${winner.name} wins this round.` : 'This game has finished.'}
+            </p>
+            <button className="primary-button" onClick={onExitGame} type="button">
+              Exit Game
+            </button>
+          </section>
+        </div>
       ) : null}
     </main>
   );

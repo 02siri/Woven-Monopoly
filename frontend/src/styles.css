@@ -939,6 +939,38 @@ button {
   font-weight: 800;
 }
 
+.game-over-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(10, 15, 26, 0.55);
+  z-index: 25;
+}
+
+.game-over-modal {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 16px;
+  padding: 30px 28px;
+  border-radius: 28px;
+  text-align: center;
+  background: rgba(255, 252, 247, 0.98);
+  box-shadow: 0 30px 90px rgba(15, 23, 42, 0.3);
+}
+
+.game-over-modal h2 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 2.6rem);
+}
+
+.game-over-modal p {
+  margin: 0;
+  color: #566477;
+  line-height: 1.6;
+}
+
 @media (max-width: 1400px) {
   .board-stage-grid {
     grid-template-columns: 220px minmax(0, 1fr) 220px;
