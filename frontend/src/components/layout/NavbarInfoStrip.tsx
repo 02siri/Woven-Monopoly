@@ -17,7 +17,7 @@ const NavbarInfoStrip = ({
     <section className="info-strip">
       <div className="info-pill">
         <span className="info-label">Game</span>
-        <strong>{gameNumber ?? '-'}</strong>
+        <strong>{gameNumber ? `#${gameNumber}` : '-'}</strong>
       </div>
       <div className="info-pill">
         <span className="info-label">Roll Set</span>
@@ -33,7 +33,7 @@ const NavbarInfoStrip = ({
       </div>
       <div className="info-pill">
         <span className="info-label">Status</span>
-        <strong>{status ?? '-'}</strong>
+        <strong>{status ? status.replace(/_/g, ' ') : '-'}</strong>
       </div>
     </section>
   );
