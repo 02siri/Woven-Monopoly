@@ -2,25 +2,20 @@ type DiceDisplayProps = {
   total: number | null;
 };
 
-const getDiceFaces = (total: number | null) => {
+const getDieFace = (total: number | null) => {
   if (total === null) {
-    return [1, 1];
+    return 1;
   }
 
-  if (total <= 1) {
-    return [1, 1];
-  }
-
-  return [1, Math.min(6, total - 1)];
+  return Math.max(1, Math.min(6, total));
 };
 
 const DiceDisplay = ({ total }: DiceDisplayProps) => {
-  const [leftDie, rightDie] = getDiceFaces(total);
+  const dieFace = getDieFace(total);
 
   return (
     <div className="dice-row">
-      <div className="dice-face">{leftDie}</div>
-      <div className="dice-face">{rightDie}</div>
+      <div className="dice-face">{dieFace}</div>
     </div>
   );
 };

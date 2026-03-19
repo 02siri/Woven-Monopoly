@@ -191,8 +191,8 @@ const GameRoom = ({
             <DiceDisplay total={latestTurn?.diceRoll ?? null} />
 
             <p className="dice-note">
-              Two dice are shown for board feel. The game still resolves against the single
-              deterministic roll set already in code.
+              The roll display reflects the same deterministic turn logic already used by
+              the game engine.
             </p>
 
             <button
@@ -202,17 +202,6 @@ const GameRoom = ({
             >
               {loading && game ? 'Working...' : startTurnLabel}
             </button>
-
-            <div className="turn-stats">
-              <div>
-                <span className="metric-label">Roll Total</span>
-                <strong>{latestTurn?.diceRoll ?? '-'}</strong>
-              </div>
-              <div>
-                <span className="metric-label">Resolved Turns</span>
-                <strong>{turns.length}</strong>
-              </div>
-            </div>
 
             {winner ? <p className="winner-banner">Winner: {winner.name}</p> : null}
             {error ? <p className="error-text compact-error">{error}</p> : null}
