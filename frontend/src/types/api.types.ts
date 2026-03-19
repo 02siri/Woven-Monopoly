@@ -16,3 +16,13 @@ export type SimulateGameResponse = {
   turns: Turn[];
   winner: Player;
 };
+
+export type ResolveTurnResponse = {
+  game: Game;
+  players: Player[];
+  properties: Property[];
+  turn: Turn;
+  currentPlayer: Player;
+  nextPlayer: Player | null;
+  winner: Player | null;
+};

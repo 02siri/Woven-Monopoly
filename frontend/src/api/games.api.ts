@@ -1,4 +1,8 @@
-import type { CreateGameResponse, SimulateGameResponse } from '../types/api.types';
+import type {
+  CreateGameResponse,
+  ResolveTurnResponse,
+  SimulateGameResponse,
+} from '../types/api.types';
 import type { Game } from '../types/game.types';
 import type { Player } from '../types/player.types';
 import type { Property } from '../types/property.types';
@@ -13,6 +17,12 @@ export const createGame = () => {
 
 export const simulateGame = (gameId: string) => {
   return request<SimulateGameResponse>(`/games/${gameId}/simulate`, {
+    method: 'POST',
+  });
+};
+
+export const resolveTurn = (gameId: string) => {
+  return request<ResolveTurnResponse>(`/games/${gameId}/turns/resolve`, {
     method: 'POST',
   });
 };

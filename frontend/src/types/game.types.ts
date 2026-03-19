@@ -7,6 +7,7 @@ export type Game = {
   rollSetUsed: 'rolls_1' | 'rolls_2';
   status: GameStatus;
   currentTurn: number;
+  nextRollIndex: number;
   currentPlayerId: string | null;
   winnerPlayerId: string | null;
   startedAt: string;
