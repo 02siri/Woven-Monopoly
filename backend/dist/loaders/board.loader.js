@@ -23,6 +23,7 @@ const loadBoardIntoDatabase = async () => {
             version: 'v1',
             spaces,
         });
+        console.log("Board loaded successfully.");
         return board;
     }
     return existingBoard;

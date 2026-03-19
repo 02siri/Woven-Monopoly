@@ -5,6 +5,7 @@ import {
   getGames,
   getPlayersByGameId,
   getPropertiesByGameId,
+  resolveTurn,
   simulateGame,
   getTurnsByGameId,
 } from '../services/games';
@@ -141,6 +142,25 @@ export const simulateGameHandler = async (req: Request, res: Response) => {
 
     res.status(200).json({
       message: 'Game simulated successfully',
+      data,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'An unexpected error occurred';
+
+    res.status(500).json({
+      message,
+    });
+  }
+};
+
+export const resolveTurnHandler = async (req: Request, res: Response) => {
+  try {
+    const gameId = getGameIdParam(req.params.gameId);
+    const data = await resolveTurn(gameId);
+
+    res.status(200).json({
+      message: 'Turn resolved successfully',
       data,
     });
   } catch (error) {

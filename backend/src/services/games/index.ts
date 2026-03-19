@@ -6,4 +6,5 @@ export {
   getPropertiesByGameId,
   getTurnsByGameId,
 } from './read-games.service';
+export { resolveTurn } from './resolve-turn.service';
 export { simulateGame } from './simulate-game.service';

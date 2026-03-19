@@ -10,7 +10,7 @@ const gamesSchema = new mongoose_1.Schema({
     },
     boardId: {
         type: mongoose_1.Types.ObjectId,
-        ref: 'Board',
+        ref: 'Boards',
         required: true,
     },
     rollSetUsed: {
@@ -27,17 +27,23 @@ const gamesSchema = new mongoose_1.Schema({
     currentTurn: {
         type: Number,
         required: true,
-        default: 1,
-        min: 1,
+        default: 0,
+        min: 0,
+    },
+    nextRollIndex: {
+        type: Number,
+        required: true,
+        default: 0,
+        min: 0,
     },
     currentPlayerId: {
         type: mongoose_1.Types.ObjectId,
-        ref: 'Player',
+        ref: 'Players',
         default: null,
     },
     winnerPlayerId: {
         type: mongoose_1.Types.ObjectId,
-        ref: 'Player',
+        ref: 'Players',
         default: null,
     },
     startedAt: {
