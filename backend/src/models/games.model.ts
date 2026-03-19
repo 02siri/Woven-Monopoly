@@ -27,8 +27,14 @@ const gamesSchema = new Schema(
     currentTurn: {
       type: Number,
       required: true,
-      default: 1,
-      min: 1,
+      default: 0,
+      min: 0,
+    },
+    nextRollIndex: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
     },
     currentPlayerId: {
       type: Types.ObjectId,
