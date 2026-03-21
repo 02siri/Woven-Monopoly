@@ -1,5 +1,6 @@
 import { type Request, type Response } from 'express';
 import {
+  confirmAction,
   createGame,
   deleteGame,
   getGameById,
@@ -188,6 +189,25 @@ export const resolveTurnHandler = async (req: Request, res: Response) => {
 
     res.status(200).json({
       message: 'Turn resolved successfully',
+      data,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'An unexpected error occurred';
+
+    res.status(500).json({
+      message,
+    });
+  }
+};
+
+export const confirmActionHandler = async (req: Request, res: Response) => {
+  try {
+    const gameId = getGameIdParam(req.params.gameId);
+    const data = await confirmAction(gameId);
+
+    res.status(200).json({
+      message: 'Action confirmed successfully',
       data,
     });
   } catch (error) {

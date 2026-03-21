@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  confirmActionHandler,
   createGameHandler,
   deleteGameHandler,
   getGameByIdHandler,
@@ -20,6 +21,7 @@ router.get('/games/:gameId/properties', getPropertiesByGameIdHandler);
 router.get('/games/:gameId/turns', getTurnsByGameIdHandler);
 router.post('/games', createGameHandler);
 router.post('/games/:gameId/turns/resolve', resolveTurnHandler);
+router.post('/games/:gameId/actions/confirm', confirmActionHandler);
 router.post('/games/:gameId/simulate', simulateGameHandler);
 router.delete('/games/delete/:gameId', deleteGameHandler);
 
