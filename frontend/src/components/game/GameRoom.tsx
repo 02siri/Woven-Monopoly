@@ -189,13 +189,23 @@ const GameRoom = ({
             </p>
 
             {!isGameOver ? (
-              <button
-                className="primary-button play-turn-button"
-                onClick={onResolveTurn}
-                disabled={loading || !game || game.status !== 'IN_PROGRESS'}
-              >
-                {loading && game ? 'Working...' : startTurnLabel}
-              </button>
+              <>
+                <button
+                  className="primary-button play-turn-button"
+                  onClick={onResolveTurn}
+                  disabled={loading || !game || game.status !== 'IN_PROGRESS'}
+                >
+                  {loading && game ? 'Working...' : startTurnLabel}
+                </button>
+                <button
+                  className="secondary-button exit-game-button"
+                  onClick={onExitGame}
+                  disabled={loading || !game}
+                  type="button"
+                >
+                  Exit Game
+                </button>
+              </>
             ) : null}
 
             {winner ? <p className="winner-banner">Winner: {winner.name}</p> : null}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   createGame,
+  deleteGame,
   fetchGameById,
   fetchGames,
   fetchPlayersByGameId,
@@ -227,9 +228,27 @@ const HomePage = () => {
   };
 
   const handleExitGame = async () => {
-    setSelectedProperty(null);
-    setShowGameRoom(false);
-    await loadGameHistory();
+    dispatch({ action: 'SET_LOADING', payload: true });
+    dispatch({ action: 'SET_ERROR', payload: null });
+
+    try {
+      if (game && game.status === 'IN_PROGRESS') {
+        await deleteGame(game._id);
+      }
+
+      dispatch({ action: 'RESET_CURRENT_GAME' });
+      setSelectedProperty(null);
+      setShowGameRoom(false);
+      await loadGameHistory();
+    } catch (exitError) {
+      dispatch({
+        action: 'SET_ERROR',
+        payload:
+          exitError instanceof Error ? exitError.message : 'Failed to exit the game',
+      });
+    } finally {
+      dispatch({ action: 'SET_LOADING', payload: false });
+    }
   };
 
   const startTurnLabel = turns.length === 0 ? 'Start' : 'Play Turn';

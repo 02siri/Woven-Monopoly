@@ -56,6 +56,9 @@ export type GameAction =
   | {
       action: 'SET_GAME_HISTORY';
       payload: Game[];
+    }
+  | {
+      action: 'RESET_CURRENT_GAME';
     };
 
 export const initialGameState: GameState = {

@@ -60,6 +60,16 @@ export const gameReducer = (state: GameState, action: GameAction): GameState => 
         games: action.payload,
       };
 
+    case 'RESET_CURRENT_GAME':
+      return {
+        ...state,
+        game: null,
+        players: [],
+        properties: [],
+        turns: [],
+        error: null,
+      };
+
     default:
       return state;
   }

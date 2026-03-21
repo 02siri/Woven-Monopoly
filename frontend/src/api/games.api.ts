@@ -15,6 +15,12 @@ export const createGame = () => {
   });
 };
 
+export const deleteGame = (gameId: string) => {
+  return request<{ gameId: string; deleted: boolean }>(`/games/${gameId}`, {
+    method: 'DELETE',
+  });
+};
+
 export const simulateGame = (gameId: string) => {
   return request<SimulateGameResponse>(`/games/${gameId}/simulate`, {
     method: 'POST',
