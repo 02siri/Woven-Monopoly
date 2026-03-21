@@ -54,6 +54,19 @@ const gamesSchema = new Schema(
       type: Date,
       default: null,
     },
+    pendingActionType: {
+      type: String,
+      enum: ['BUY_PROPERTY', 'PAY_RENT', 'COLLECT_GO', null],
+      default: null,
+    },
+    pendingActionData: {
+      type: Schema.Types.Mixed,
+      default: null,
+    },
+    pendingTurnData: {
+      type: Schema.Types.Mixed,
+      default: null,
+    },
   },
   {
     timestamps: true,
