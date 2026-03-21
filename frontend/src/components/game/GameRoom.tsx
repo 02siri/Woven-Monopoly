@@ -4,8 +4,9 @@ import PlayerCard from '../cards/PlayerCard';
 import GameBoard from '../board/GameBoard';
 import DiceDisplay from '../common/DiceDisplay';
 import PropertyModal from '../common/PropertyModal';
+import TurnActionModal from '../common/TurnActionModal';
 import GameLogPanel from '../common/GameLogPanel';
-import type { Game } from '../../types/game.types';
+import type { Game, PendingAction } from '../../types/game.types';
 import type { Player } from '../../types/player.types';
 import type { Property } from '../../types/property.types';
 import type { Turn } from '../../types/turn.types';
@@ -22,6 +23,7 @@ type GameRoomProps = {
   currentPlayer: Player | null;
   winner: Player | null;
   latestTurn: Turn | null;
+  pendingAction: PendingAction | null;
   cornerPlayers: {
     topLeft: Player | null;
     topRight: Player | null;
@@ -34,6 +36,7 @@ type GameRoomProps = {
   showBoard: boolean;
   onCreateGame: () => void;
   onResolveTurn: () => void;
+  onConfirmPendingAction: () => void;
   onExitGame: () => void;
   onRefreshGameHistory: () => void;
   onLoadGameDetails: (gameId: string) => void;
@@ -52,6 +55,7 @@ const GameRoom = ({
   currentPlayer,
   winner,
   latestTurn,
+  pendingAction,
   cornerPlayers,
   playerPropertiesMap,
   startTurnLabel,
@@ -59,6 +63,7 @@ const GameRoom = ({
   showBoard,
   onCreateGame,
   onResolveTurn,
+  onConfirmPendingAction,
   onExitGame,
   onRefreshGameHistory,
   onLoadGameDetails,
@@ -204,7 +209,12 @@ const GameRoom = ({
                 <button
                   className="primary-button play-turn-button"
                   onClick={onResolveTurn}
-                  disabled={loading || !game || game.status !== 'IN_PROGRESS'}
+                  disabled={
+                    loading ||
+                    !game ||
+                    game.status !== 'IN_PROGRESS' ||
+                    Boolean(pendingAction)
+                  }
                 >
                   {loading && game ? 'Working...' : startTurnLabel}
                 </button>
@@ -234,6 +244,21 @@ const GameRoom = ({
           players={players}
           properties={properties}
           onClose={() => onSelectProperty(null)}
+        />
+      ) : null}
+
+      {pendingAction ? (
+        <TurnActionModal
+          action={pendingAction}
+          property={
+            pendingAction.propertyId
+              ? properties.find((property) => property._id === pendingAction.propertyId) ?? null
+              : null
+          }
+          players={players}
+          properties={properties}
+          loading={loading}
+          onConfirm={onConfirmPendingAction}
         />
       ) : null}
 

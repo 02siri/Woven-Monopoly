@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+  confirmAction,
   createGame,
   deleteGame,
   fetchGameById,
@@ -34,6 +35,7 @@ const HomePage = () => {
     players.find((player) => player._id === game?.currentPlayerId) ?? null;
   const winner = players.find((player) => player._id === game?.winnerPlayerId) ?? null;
   const latestTurn = turns[turns.length - 1] ?? null;
+  const pendingAction = game?.pendingActionData ?? null;
 
   const playersByTurnOrder = useMemo(
     () => [...players].sort((playerA, playerB) => playerA.turnOrder - playerB.turnOrder),
@@ -231,6 +233,41 @@ const HomePage = () => {
     }
   };
 
+  const handleConfirmPendingAction = async () => {
+    if (!game) {
+      return;
+    }
+
+    dispatch({ action: 'SET_LOADING', payload: true });
+    dispatch({ action: 'SET_ERROR', payload: null });
+
+    try {
+      const data = await confirmAction(game._id);
+
+      dispatch({
+        action: 'SET_TURN_RESULT',
+        payload: {
+          game: data.game,
+          players: data.players,
+          properties: data.properties,
+          turn: data.turn,
+        },
+      });
+
+      await loadGameHistory();
+    } catch (actionError) {
+      dispatch({
+        action: 'SET_ERROR',
+        payload:
+          actionError instanceof Error
+            ? actionError.message
+            : 'Failed to confirm the pending action',
+      });
+    } finally {
+      dispatch({ action: 'SET_LOADING', payload: false });
+    }
+  };
+
   const handleExitGame = async () => {
     dispatch({ action: 'SET_LOADING', payload: true });
     dispatch({ action: 'SET_ERROR', payload: null });
@@ -355,6 +392,7 @@ const HomePage = () => {
       currentPlayer={currentPlayer}
       winner={winner}
       latestTurn={latestTurn}
+      pendingAction={pendingAction}
       cornerPlayers={cornerPlayers}
       playerPropertiesMap={playerPropertiesMap}
       startTurnLabel={startTurnLabel}
@@ -365,6 +403,9 @@ const HomePage = () => {
       }}
       onResolveTurn={() => {
         void handleResolveTurn();
+      }}
+      onConfirmPendingAction={() => {
+        void handleConfirmPendingAction();
       }}
       onExitGame={() => {
         void handleExitGame();

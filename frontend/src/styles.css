@@ -893,6 +893,22 @@ button {
   box-shadow: 0 30px 90px rgba(15, 23, 42, 0.3);
 }
 
+.turn-action-modal {
+  display: grid;
+  gap: 18px;
+}
+
+.turn-action-modal-compact {
+  width: min(420px, 100%);
+  text-align: center;
+}
+
+.turn-action-modal-compact .eyebrow,
+.turn-action-modal-compact h3,
+.turn-action-modal-compact .modal-note {
+  text-align: center;
+}
+
 .property-banner {
   width: 100%;
   height: 14px;
@@ -950,6 +966,10 @@ button {
   background: #070718;
   color: #fff;
   font-weight: 800;
+}
+
+.modal-action-button {
+  width: 100%;
 }
 
 .game-over-backdrop {
