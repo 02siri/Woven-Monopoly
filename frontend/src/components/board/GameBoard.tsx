@@ -12,7 +12,6 @@ type BoardTile = {
 type BoardLayoutItem = {
   index: number;
   className: string;
-  orientation: 'corner' | 'horizontal' | 'vertical';
 };
 
 type GameBoardProps = {
@@ -23,15 +22,15 @@ type GameBoardProps = {
 };
 
 const TILE_LAYOUT: BoardLayoutItem[] = [
-  { index: 0, className: 'tile-go', orientation: 'corner' },
-  { index: 1, className: 'tile-bottom-1', orientation: 'horizontal' },
-  { index: 2, className: 'tile-bottom-2', orientation: 'horizontal' },
-  { index: 3, className: 'tile-bottom-3', orientation: 'corner' },
-  { index: 4, className: 'tile-left-1', orientation: 'vertical' },
-  { index: 5, className: 'tile-top-left', orientation: 'corner' },
-  { index: 6, className: 'tile-top-center', orientation: 'horizontal' },
-  { index: 7, className: 'tile-top-right', orientation: 'corner' },
-  { index: 8, className: 'tile-right-1', orientation: 'vertical' },
+  { index: 0, className: 'board-pos-0' },
+  { index: 1, className: 'board-pos-1' },
+  { index: 2, className: 'board-pos-2' },
+  { index: 3, className: 'board-pos-3' },
+  { index: 4, className: 'board-pos-4' },
+  { index: 5, className: 'board-pos-5' },
+  { index: 6, className: 'board-pos-6' },
+  { index: 7, className: 'board-pos-7' },
+  { index: 8, className: 'board-pos-8' },
 ];
 
 const COLOUR_CLASS_MAP: Record<string, string> = {
@@ -85,9 +84,11 @@ const GameBoard = ({
           return (
             <button
               key={layoutItem.index}
-              className={`board-tile ${layoutItem.className} board-tile-${layoutItem.orientation} ${property ? 'property-tile' : 'go-tile'} ${
+              className={`board-tile ${layoutItem.className} ${property ? 'property-tile' : 'go-tile'} ${
                 property?.colour ? COLOUR_CLASS_MAP[property.colour] ?? '' : ''
-              } ${activePlayerId && tilePlayers.some((player) => player._id === activePlayerId) ? 'active-tile' : ''}`}
+              } ${activePlayerId && tilePlayers.some((player) => player._id === activePlayerId) ? 'active-tile' : ''} ${
+                layoutItem.index === 0 ? 'board-tile-go' : ''
+              }`}
               onClick={() => {
                 if (property) {
                   onSelectProperty(property);
@@ -117,12 +118,10 @@ const GameBoard = ({
           );
         })}
 
-        <div className="board-center">
-          <div className="board-center-mark">
-            <p className="board-brand">Woven Monopoly</p>
-            <h2>Deterministic Edition</h2>
-            <p>Two dice on screen, one fixed roll stream under the hood.</p>
-          </div>
+        <div className="board-center-tile" aria-hidden="true">
+          <p className="board-logo-kicker">Woven Monopoly</p>
+          <h2>Monopoly</h2>
+          <span>Deterministic Edition</span>
           <div className="board-center-stats">
             <div>
               <span className="metric-label">Properties</span>
