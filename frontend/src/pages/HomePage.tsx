@@ -39,6 +39,10 @@ const HomePage = () => {
     () => [...players].sort((playerA, playerB) => playerA.turnOrder - playerB.turnOrder),
     [players]
   );
+  const completedGames = useMemo(
+    () => games.filter((historyGame) => historyGame.status !== 'IN_PROGRESS'),
+    [games]
+  );
   const playerPropertiesMap = useMemo(
     () =>
       players.reduce<Record<string, number>>((accumulator, player) => {
@@ -128,14 +132,14 @@ const HomePage = () => {
 
   useEffect(() => {
     const loadHistorySummaries = async () => {
-      if (games.length === 0) {
+      if (completedGames.length === 0) {
         setHistorySummaries({});
         return;
       }
 
       try {
         const summaries = await Promise.all(
-          games.map(async (historyGame) => {
+          completedGames.map(async (historyGame) => {
             const historyPlayers = await fetchPlayersByGameId(historyGame._id);
             const sortedByBalance = [...historyPlayers].sort(
               (playerA, playerB) => playerB.balance - playerA.balance
@@ -165,7 +169,7 @@ const HomePage = () => {
     };
 
     void loadHistorySummaries();
-  }, [games]);
+  }, [completedGames]);
 
   const handleCreateGame = async () => {
     dispatch({ action: 'SET_LOADING', payload: true });
@@ -288,7 +292,7 @@ const HomePage = () => {
             </button>
           </div>
 
-          {games.length > 0 ? (
+          {completedGames.length > 0 ? (
             <section className="history-table landing-history-list" aria-label="Previous games">
               <div className="history-table-header">
                 <span>Game</span>
@@ -297,7 +301,7 @@ const HomePage = () => {
               </div>
 
               <ul className="history-list history-table-rows">
-                {games.map((historyGame) => (
+                {completedGames.map((historyGame) => (
                   <li
                     key={historyGame._id}
                     className="history-item history-item-static"

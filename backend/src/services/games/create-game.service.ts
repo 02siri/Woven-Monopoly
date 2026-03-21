@@ -12,14 +12,6 @@ const DEFAULT_PLAYERS = [
 ];
 
 export const createGame = async () => {
-  const inProgressGame = await GamesModel.findOne({
-    status: 'IN_PROGRESS',
-  });
-
-  if (inProgressGame) {
-    throw new Error('A game is already in progress. Finish it before creating a new one.');
-  }
-
   const latestGame = await GamesModel.findOne().sort({ gameNumber: -1 });
   const gameNumber = latestGame ? latestGame.gameNumber + 1 : 1;
   const rollSetUsed = getRollSetForGameNumber(gameNumber);

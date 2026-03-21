@@ -31,13 +31,6 @@ export const createGameHandler = async (_req: Request, res: Response) => {
     const message =
       error instanceof Error ? error.message : 'An unexpected error occurred';
 
-    if (message === 'A game is already in progress. Finish it before creating a new one.') {
-      res.status(409).json({
-        message,
-      });
-      return;
-    }
-
     res.status(500).json({
       message,
     });
