@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import NavbarInfoStrip from '../layout/NavbarInfoStrip';
 import PlayerCard from '../cards/PlayerCard';
 import GameBoard from '../board/GameBoard';
@@ -64,6 +65,16 @@ const GameRoom = ({
   onSelectProperty,
 }: GameRoomProps) => {
   const isGameOver = Boolean(game && game.status !== 'IN_PROGRESS');
+  const [showGameOverModal, setShowGameOverModal] = useState(false);
+
+  useEffect(() => {
+    if (isGameOver) {
+      setShowGameOverModal(true);
+      return;
+    }
+
+    setShowGameOverModal(false);
+  }, [isGameOver]);
 
   return (
     <main className="monopoly-page">
@@ -226,14 +237,21 @@ const GameRoom = ({
         />
       ) : null}
 
-      {isGameOver ? (
+      {showGameOverModal ? (
         <div className="game-over-backdrop" role="presentation">
           <section className="game-over-modal" role="dialog" aria-modal="true">
             <h2>Game Over!</h2>
             <p>
               {winner ? `${winner.name} wins this round.` : 'This game has finished.'}
             </p>
-            <button className="primary-button" onClick={onExitGame} type="button">
+            <button
+              className="primary-button"
+              onClick={() => {
+                setShowGameOverModal(false);
+                onExitGame();
+              }}
+              type="button"
+            >
               Exit Game
             </button>
           </section>
