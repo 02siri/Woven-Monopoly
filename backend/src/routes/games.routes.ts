@@ -21,6 +21,6 @@ router.get('/games/:gameId/turns', getTurnsByGameIdHandler);
 router.post('/games', createGameHandler);
 router.post('/games/:gameId/turns/resolve', resolveTurnHandler);
 router.post('/games/:gameId/simulate', simulateGameHandler);
-router.delete('/games/:gameId', deleteGameHandler);
+router.delete('/games/delete/:gameId', deleteGameHandler);
 
 export default router;

@@ -16,7 +16,7 @@ export const createGame = () => {
 };
 
 export const deleteGame = (gameId: string) => {
-  return request<{ gameId: string; deleted: boolean }>(`/games/${gameId}`, {
+  return request<{ gameId: string; deleted: boolean }>(`/games/delete/${gameId}`, {
     method: 'DELETE',
   });
 };
