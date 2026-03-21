@@ -51,13 +51,9 @@ const PropertyModal = ({
           <p><strong>Owner:</strong> {resolvedOwner}</p>
         </div>
         <p className="modal-note">
-          Properties are purchased automatically when a player lands on them.
-          Rent is derived live from ownership and monopoly state.
+          View property details here. Mandatory turn actions are shown separately when a
+          player lands on a tile.
         </p>
-        <div className="modal-footer-banner">
-          <span>Auto-buy on landing</span>
-          <strong>${property.price}</strong>
-        </div>
       </section>
     </div>
   );
