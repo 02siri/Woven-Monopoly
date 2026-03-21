@@ -716,6 +716,11 @@ button {
   width: 100%;
 }
 
+.exit-game-button {
+  width: 100%;
+  margin-top: 10px;
+}
+
 .turn-stats {
   margin-top: 18px;
   display: grid;
