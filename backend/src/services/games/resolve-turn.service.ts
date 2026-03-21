@@ -6,7 +6,11 @@ import {
   type RollSetKey,
 } from '../../loaders/rollsets.loader';
 import { getPlayersByGameId, getPropertiesByGameId } from './read-games.service';
-import { resolveSingleTurn } from './turn-resolution.shared';
+import {
+  buildPendingTurn,
+  finalizeTurnState,
+  getActivePlayerOrThrow,
+} from './turn-resolution.shared';
 
 export const resolveTurn = async (gameId: string) => {
   const game = await GamesModel.findById(gameId);
@@ -17,6 +21,10 @@ export const resolveTurn = async (gameId: string) => {
 
   if (game.status !== 'IN_PROGRESS') {
     throw new Error('This game is no longer in progress');
+  }
+
+  if (game.pendingActionType || game.pendingTurnData) {
+    throw new Error('Resolve the pending action before playing the next turn');
   }
 
   const board = await BoardsModel.findById(game.boardId);
@@ -38,7 +46,7 @@ export const resolveTurn = async (gameId: string) => {
     throw new Error('No more dice rolls available for this game');
   }
 
-  const turnResult = resolveSingleTurn({
+  const turnResult = buildPendingTurn({
     board,
     game,
     players,
@@ -47,7 +55,57 @@ export const resolveTurn = async (gameId: string) => {
     turnNumber: game.currentTurn + 1,
   });
 
-  const createdTurn = await TurnsModel.create(turnResult.turnRecord);
+  game.nextRollIndex += 1;
+
+  if (turnResult.pendingAction) {
+    game.pendingActionType = turnResult.pendingAction.type;
+    game.pendingActionData = turnResult.pendingAction;
+    game.pendingTurnData = turnResult.pendingTurnData;
+
+    await Promise.all(players.map((player) => player.save()));
+    await game.save();
+
+    return {
+      game,
+      players,
+      properties,
+      turn: null,
+      currentPlayer: turnResult.activePlayer,
+      nextPlayer: null,
+      winner: null,
+      pendingAction: turnResult.pendingAction,
+    };
+  }
+
+  const turnTimestamp = new Date();
+  const { activePlayer, activePlayerIndex } = getActivePlayerOrThrow(players, game);
+  const finalized = finalizeTurnState({
+    game,
+    players,
+    activePlayer,
+    activePlayerIndex,
+    pendingTurnData: turnResult.pendingTurnData,
+    turnTimestamp,
+    finalActionType: turnResult.pendingTurnData.passedGo ? 'PASS_GO' : 'MOVE',
+  });
+
+  const createdTurn = await TurnsModel.create({
+    gameId: game._id,
+    turnNumber: turnResult.pendingTurnData.turnNumber,
+    playerId: activePlayer._id,
+    diceRoll: turnResult.pendingTurnData.diceRoll,
+    startPosition: turnResult.pendingTurnData.startPosition,
+    endPosition: turnResult.pendingTurnData.endPosition,
+    passedGo: turnResult.pendingTurnData.passedGo,
+    actionType: finalized.actionType,
+    propertyId: turnResult.pendingTurnData.propertyId,
+    transactionAmount: turnResult.pendingTurnData.transactionAmount,
+    balanceAfterTurn: activePlayer.balance,
+    notes: activePlayer.lastAction,
+    createdAt: turnTimestamp,
+    updatedAt: turnTimestamp,
+  });
+
   await Promise.all(players.map((player) => player.save()));
   await Promise.all(properties.map((property) => property.save()));
   await game.save();
@@ -57,8 +115,9 @@ export const resolveTurn = async (gameId: string) => {
     players,
     properties,
     turn: createdTurn,
-    currentPlayer: turnResult.activePlayer,
-    nextPlayer: turnResult.nextPlayer,
-    winner: turnResult.winner,
+    currentPlayer: activePlayer,
+    nextPlayer: finalized.nextPlayer,
+    winner: finalized.winner,
+    pendingAction: null,
   };
 };

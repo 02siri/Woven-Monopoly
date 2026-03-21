@@ -7,6 +7,32 @@ import type { BoardsDocument } from '../../models/boards.model';
 type PlayerDoc = HydratedDocument<PlayersDocument>;
 type PropertyDoc = HydratedDocument<PropertiesDocument>;
 type BoardDoc = HydratedDocument<BoardsDocument>;
+type GameDoc = HydratedDocument<GamesDocument>;
+
+export type PendingActionType = 'BUY_PROPERTY' | 'PAY_RENT' | 'COLLECT_GO';
+
+export type PendingActionData = {
+  type: PendingActionType;
+  title: string;
+  description: string;
+  buttonLabel: string;
+  amount: number;
+  propertyId: string | null;
+  recipientPlayerId?: string | null;
+  recipientPlayerName?: string | null;
+};
+
+export type PendingTurnData = {
+  turnNumber: number;
+  diceRoll: number;
+  startPosition: number;
+  endPosition: number;
+  passedGo: boolean;
+  propertyId: string | null;
+  actionQueue: PendingActionData[];
+  noteParts: string[];
+  transactionAmount: number;
+};
 
 export const hasMonopolyForColour = (
   ownerId: string,
@@ -59,21 +85,7 @@ export const getNextActivePlayerIndex = (
   return -1;
 };
 
-export const resolveSingleTurn = ({
-  board,
-  game,
-  players,
-  properties,
-  diceRoll,
-  turnNumber,
-}: {
-  board: BoardDoc;
-  game: HydratedDocument<GamesDocument>;
-  players: PlayerDoc[];
-  properties: PropertyDoc[];
-  diceRoll: number;
-  turnNumber: number;
-}) => {
+export const getActivePlayerOrThrow = (players: PlayerDoc[], game: GameDoc) => {
   const activePlayerIndex = players.findIndex(
     (player) => player._id.toString() === game.currentPlayerId?.toString()
   );
@@ -88,26 +100,48 @@ export const resolveSingleTurn = ({
     throw new Error('Current player is bankrupt and cannot take a turn');
   }
 
+  return {
+    activePlayer,
+    activePlayerIndex,
+  };
+};
+
+export const buildPendingTurn = ({
+  board,
+  game,
+  players,
+  properties,
+  diceRoll,
+  turnNumber,
+}: {
+  board: BoardDoc;
+  game: GameDoc;
+  players: PlayerDoc[];
+  properties: PropertyDoc[];
+  diceRoll: number;
+  turnNumber: number;
+}) => {
+  const { activePlayer } = getActivePlayerOrThrow(players, game);
   const boardSize = board.spaces.length;
   const startPosition = activePlayer.positionIndex;
   const rawEndPosition = startPosition + diceRoll;
   const passedGo = rawEndPosition >= boardSize;
   const endPosition = rawEndPosition % boardSize;
   const landedSpace = board.spaces[endPosition];
-  const noteParts: string[] = [];
-  const turnTimestamp = new Date();
-  let actionType: 'MOVE' | 'BUY_PROPERTY' | 'PAY_RENT' | 'BANKRUPT' | 'PASS_GO' =
-    'MOVE';
-  let transactionAmount = 0;
-  let propertyId = null;
+  const actionQueue: PendingActionData[] = [];
+  let propertyId: string | null = null;
 
   activePlayer.positionIndex = endPosition;
 
   if (passedGo) {
-    activePlayer.balance += 1;
-    transactionAmount += 1;
-    actionType = 'PASS_GO';
-    noteParts.push(`${activePlayer.name} passed GO and received $1`);
+    actionQueue.push({
+      type: 'COLLECT_GO',
+      title: 'Yayy! You passed Go',
+      description: 'Collect $1 each time you pass Go.',
+      buttonLabel: 'Collect $1',
+      amount: 1,
+      propertyId: null,
+    });
   }
 
   if (landedSpace.type === 'property') {
@@ -119,16 +153,17 @@ export const resolveSingleTurn = ({
       throw new Error(`Property not found at board index ${endPosition}`);
     }
 
-    propertyId = property._id;
+    propertyId = property._id.toString();
 
     if (!property.owner) {
-      activePlayer.balance -= property.price;
-      transactionAmount -= property.price;
-      property.owner = activePlayer._id;
-      actionType = 'BUY_PROPERTY';
-      noteParts.push(
-        `${activePlayer.name} bought ${property.name} for $${property.price}`
-      );
+      actionQueue.push({
+        type: 'BUY_PROPERTY',
+        title: property.name,
+        description: `You landed on ${property.name}. Buy it to continue your turn.`,
+        buttonLabel: `Buy for $${property.price}`,
+        amount: property.price,
+        propertyId,
+      });
     } else if (property.owner.toString() !== activePlayer._id.toString()) {
       const owner = players.find(
         (player) => player._id.toString() === property.owner?.toString()
@@ -140,98 +175,219 @@ export const resolveSingleTurn = ({
 
       const effectiveRent = getEffectiveRent(property, properties);
 
-      activePlayer.balance -= effectiveRent;
-      owner.balance += effectiveRent;
-      owner.lastAction = `Received $${effectiveRent} rent from ${activePlayer.name}`;
-      owner.lastActionAt = turnTimestamp;
-      transactionAmount -= effectiveRent;
-      actionType = 'PAY_RENT';
-      noteParts.push(
-        `${activePlayer.name} paid $${effectiveRent} rent to ${owner.name} for ${property.name}`
-      );
-    } else {
-      noteParts.push(`${activePlayer.name} landed on owned property ${property.name}`);
+      actionQueue.push({
+        type: 'PAY_RENT',
+        title: 'Pay Rent',
+        description: `Pay $${effectiveRent} rent to ${owner.name} for ${property.name}.`,
+        buttonLabel: `Pay $${effectiveRent}`,
+        amount: effectiveRent,
+        propertyId,
+        recipientPlayerId: owner._id.toString(),
+        recipientPlayerName: owner.name,
+      });
     }
-  } else {
-    noteParts.push(`${activePlayer.name} moved to ${landedSpace.name}`);
   }
 
-  let bankrupt = false;
+  const pendingTurnData: PendingTurnData = {
+    turnNumber,
+    diceRoll,
+    startPosition,
+    endPosition,
+    passedGo,
+    propertyId,
+    actionQueue,
+    noteParts: [],
+    transactionAmount: 0,
+  };
 
-  if (activePlayer.balance < 0) {
-    activePlayer.balance = 0;
-    activePlayer.isBankrupt = true;
-    activePlayer.isActive = false;
-    actionType = 'BANKRUPT';
-    noteParts.push(`${activePlayer.name} became bankrupt`);
-    bankrupt = true;
-  }
+  return {
+    activePlayer,
+    pendingTurnData,
+    pendingAction: actionQueue[0] ?? null,
+    landedSpace,
+  };
+};
+
+export const finalizeTurnState = ({
+  game,
+  players,
+  activePlayer,
+  activePlayerIndex,
+  pendingTurnData,
+  turnTimestamp,
+  finalActionType,
+}: {
+  game: GameDoc;
+  players: PlayerDoc[];
+  activePlayer: PlayerDoc;
+  activePlayerIndex: number;
+  pendingTurnData: PendingTurnData;
+  turnTimestamp: Date;
+  finalActionType: 'MOVE' | 'BUY_PROPERTY' | 'PAY_RENT' | 'BANKRUPT' | 'PASS_GO';
+}) => {
+  const noteParts = pendingTurnData.noteParts.length > 0
+    ? pendingTurnData.noteParts
+    : [`${activePlayer.name} moved to board space ${pendingTurnData.endPosition}`];
 
   activePlayer.lastAction = noteParts.join('. ');
   activePlayer.lastActionAt = turnTimestamp;
+
+  const bankrupt = activePlayer.balance < 0;
+
+  if (bankrupt) {
+    activePlayer.balance = 0;
+    activePlayer.isBankrupt = true;
+    activePlayer.isActive = false;
+    activePlayer.lastAction = `${activePlayer.lastAction}. ${activePlayer.name} became bankrupt`;
+  }
 
   const nextActivePlayerIndex = getNextActivePlayerIndex(players, activePlayerIndex);
 
   if (nextActivePlayerIndex === -1 || bankrupt) {
     const winner = getWinner(players);
-    game.currentTurn = turnNumber;
-    game.nextRollIndex += 1;
+    game.currentTurn = pendingTurnData.turnNumber;
     game.currentPlayerId = null;
     game.winnerPlayerId = winner._id;
     game.completedAt = new Date();
     game.status = 'BANKRUPT_END';
+    game.pendingActionType = null;
+    game.pendingActionData = null;
+    game.pendingTurnData = null;
 
     return {
-      activePlayer,
-      bankrupt: true,
-      gameFinished: true,
       winner,
       nextPlayer: null,
-      turnRecord: {
-        gameId: game._id,
-        turnNumber,
-        playerId: activePlayer._id,
-        diceRoll,
-        startPosition,
-        endPosition,
-        passedGo,
-        actionType,
-        propertyId,
-        transactionAmount,
-        balanceAfterTurn: activePlayer.balance,
-        notes: activePlayer.lastAction,
-        createdAt: turnTimestamp,
-        updatedAt: turnTimestamp,
-      },
+      actionType: bankrupt ? 'BANKRUPT' : finalActionType,
+      gameFinished: true,
     };
   }
 
   const nextPlayer = players[nextActivePlayerIndex];
-  game.currentTurn = turnNumber;
-  game.nextRollIndex += 1;
+  game.currentTurn = pendingTurnData.turnNumber;
   game.currentPlayerId = nextPlayer._id;
+  game.pendingActionType = null;
+  game.pendingActionData = null;
+  game.pendingTurnData = null;
+
+  return {
+    winner: null,
+    nextPlayer,
+    actionType: finalActionType,
+    gameFinished: false,
+  };
+};
+
+export const resolveSingleTurn = ({
+  board,
+  game,
+  players,
+  properties,
+  diceRoll,
+  turnNumber,
+}: {
+  board: BoardDoc;
+  game: GameDoc;
+  players: PlayerDoc[];
+  properties: PropertyDoc[];
+  diceRoll: number;
+  turnNumber: number;
+}) => {
+  const { activePlayer, activePlayerIndex } = getActivePlayerOrThrow(players, game);
+  const turnTimestamp = new Date();
+  const builtTurn = buildPendingTurn({
+    board,
+    game,
+    players,
+    properties,
+    diceRoll,
+    turnNumber,
+  });
+
+  let finalActionType: 'MOVE' | 'BUY_PROPERTY' | 'PAY_RENT' | 'BANKRUPT' | 'PASS_GO' =
+    builtTurn.pendingTurnData.passedGo ? 'PASS_GO' : 'MOVE';
+
+  for (const action of builtTurn.pendingTurnData.actionQueue) {
+    if (action.type === 'COLLECT_GO') {
+      activePlayer.balance += action.amount;
+      builtTurn.pendingTurnData.transactionAmount += action.amount;
+      builtTurn.pendingTurnData.noteParts.push(
+        `${activePlayer.name} passed GO and collected $${action.amount}`
+      );
+      finalActionType = 'PASS_GO';
+      continue;
+    }
+
+    if (action.type === 'BUY_PROPERTY') {
+      const property = properties.find(
+        (currentProperty) => currentProperty._id.toString() === action.propertyId
+      );
+
+      if (!property) {
+        throw new Error('Pending property not found');
+      }
+
+      activePlayer.balance -= action.amount;
+      property.owner = activePlayer._id;
+      builtTurn.pendingTurnData.transactionAmount -= action.amount;
+      builtTurn.pendingTurnData.noteParts.push(
+        `${activePlayer.name} bought ${property.name} for $${action.amount}`
+      );
+      finalActionType = 'BUY_PROPERTY';
+      continue;
+    }
+
+    if (action.type === 'PAY_RENT') {
+      const owner = players.find(
+        (player) => player._id.toString() === action.recipientPlayerId
+      );
+
+      if (!owner) {
+        throw new Error('Rent recipient not found');
+      }
+
+      activePlayer.balance -= action.amount;
+      owner.balance += action.amount;
+      owner.lastAction = `Received $${action.amount} rent from ${activePlayer.name}`;
+      owner.lastActionAt = turnTimestamp;
+      builtTurn.pendingTurnData.transactionAmount -= action.amount;
+      builtTurn.pendingTurnData.noteParts.push(
+        `${activePlayer.name} paid $${action.amount} rent to ${owner.name}`
+      );
+      finalActionType = 'PAY_RENT';
+    }
+  }
+
+  const finalized = finalizeTurnState({
+    game,
+    players,
+    activePlayer,
+    activePlayerIndex,
+    pendingTurnData: builtTurn.pendingTurnData,
+    turnTimestamp,
+    finalActionType,
+  });
 
   return {
     activePlayer,
-    bankrupt: false,
-    gameFinished: false,
-    winner: null,
-    nextPlayer,
+    bankrupt: finalized.actionType === 'BANKRUPT',
+    gameFinished: finalized.gameFinished,
+    winner: finalized.winner,
+    nextPlayer: finalized.nextPlayer,
     turnRecord: {
       gameId: game._id,
-      turnNumber,
+      turnNumber: builtTurn.pendingTurnData.turnNumber,
       playerId: activePlayer._id,
-      diceRoll,
-      startPosition,
-      endPosition,
-      passedGo,
-      actionType,
-      propertyId,
-      transactionAmount,
+      diceRoll: builtTurn.pendingTurnData.diceRoll,
+      startPosition: builtTurn.pendingTurnData.startPosition,
+      endPosition: builtTurn.pendingTurnData.endPosition,
+      passedGo: builtTurn.pendingTurnData.passedGo,
+      actionType: finalized.actionType,
+      propertyId: builtTurn.pendingTurnData.propertyId,
+      transactionAmount: builtTurn.pendingTurnData.transactionAmount,
       balanceAfterTurn: activePlayer.balance,
       notes: activePlayer.lastAction,
       createdAt: turnTimestamp,
       updatedAt: turnTimestamp,
     },
-    };
+  };
 };
