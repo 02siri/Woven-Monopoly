@@ -1,6 +1,7 @@
 import { type Request, type Response } from 'express';
 import {
   createGame,
+  deleteGame,
   getGameById,
   getGames,
   getPlayersByGameId,
@@ -78,6 +79,32 @@ export const getGameByIdHandler = async (req: Request, res: Response) => {
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'An unexpected error occurred';
+
+    res.status(500).json({
+      message,
+    });
+  }
+};
+
+export const deleteGameHandler = async (req: Request, res: Response) => {
+  try {
+    const gameId = getGameIdParam(req.params.gameId);
+    const data = await deleteGame(gameId);
+
+    res.status(200).json({
+      message: 'Game deleted successfully',
+      data,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'An unexpected error occurred';
+
+    if (message === 'Game not found') {
+      res.status(404).json({
+        message,
+      });
+      return;
+    }
 
     res.status(500).json({
       message,

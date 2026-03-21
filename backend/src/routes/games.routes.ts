@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   createGameHandler,
+  deleteGameHandler,
   getGameByIdHandler,
   getGamesHandler,
   getPlayersByGameIdHandler,
@@ -20,5 +21,6 @@ router.get('/games/:gameId/turns', getTurnsByGameIdHandler);
 router.post('/games', createGameHandler);
 router.post('/games/:gameId/turns/resolve', resolveTurnHandler);
 router.post('/games/:gameId/simulate', simulateGameHandler);
+router.delete('/games/:gameId', deleteGameHandler);
 
 export default router;
