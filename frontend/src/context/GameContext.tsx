@@ -41,7 +41,7 @@ export type GameAction =
         game: Game;
         players: Player[];
         properties: Property[];
-        turn: Turn;
+        turn: Turn | null;
       };
     }
   | {

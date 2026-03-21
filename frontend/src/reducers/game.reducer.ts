@@ -40,7 +40,7 @@ export const gameReducer = (state: GameState, action: GameAction): GameState => 
         game: action.payload.game,
         players: action.payload.players,
         properties: action.payload.properties,
-        turns: [...state.turns, action.payload.turn],
+        turns: action.payload.turn ? [...state.turns, action.payload.turn] : state.turns,
         error: null,
       };
 
