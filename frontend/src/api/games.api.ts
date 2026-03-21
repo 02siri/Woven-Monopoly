@@ -1,4 +1,5 @@
 import type {
+  ConfirmActionResponse,
   CreateGameResponse,
   ResolveTurnResponse,
   SimulateGameResponse,
@@ -29,6 +30,12 @@ export const simulateGame = (gameId: string) => {
 
 export const resolveTurn = (gameId: string) => {
   return request<ResolveTurnResponse>(`/games/${gameId}/turns/resolve`, {
+    method: 'POST',
+  });
+};
+
+export const confirmAction = (gameId: string) => {
+  return request<ConfirmActionResponse>(`/games/${gameId}/actions/confirm`, {
     method: 'POST',
   });
 };
