@@ -11,9 +11,26 @@ const DEFAULT_PLAYERS = [
   { name: 'Sweedal', turnOrder: 4 },
 ];
 
+const getNextAvailableGameNumber = async () => {
+  const existingGames = await GamesModel.find({}, { gameNumber: 1, _id: 0 }).sort({
+    gameNumber: 1,
+  });
+
+  let nextGameNumber = 1;
+
+  for (const game of existingGames) {
+    if (game.gameNumber !== nextGameNumber) {
+      break;
+    }
+
+    nextGameNumber += 1;
+  }
+
+  return nextGameNumber;
+};
+
 export const createGame = async () => {
-  const latestGame = await GamesModel.findOne().sort({ gameNumber: -1 });
-  const gameNumber = latestGame ? latestGame.gameNumber + 1 : 1;
+  const gameNumber = await getNextAvailableGameNumber();
   const rollSetUsed = getRollSetForGameNumber(gameNumber);
   const board = await getBoardOrThrow();
 
