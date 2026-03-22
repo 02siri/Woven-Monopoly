@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+  abandonGame,
   confirmAction,
   createGame,
-  deleteGame,
+  exitGame,
   fetchGameById,
   fetchGames,
   fetchPlayersByGameId,
   fetchPropertiesByGameId,
   fetchTurnsByGameId,
   resolveTurn,
+  restartGame,
+  resumeGame,
 } from '../api/games.api';
 import { useGameDispatch, useGameState } from '../context/GameContext';
 import GameRoom from '../components/game/GameRoom';
@@ -41,7 +44,7 @@ const HomePage = () => {
     () => [...players].sort((playerA, playerB) => playerA.turnOrder - playerB.turnOrder),
     [players]
   );
-  const completedGames = useMemo(
+  const historyGames = useMemo(
     () => games.filter((historyGame) => historyGame.status !== 'IN_PROGRESS'),
     [games]
   );
@@ -134,14 +137,14 @@ const HomePage = () => {
 
   useEffect(() => {
     const loadHistorySummaries = async () => {
-      if (completedGames.length === 0) {
+      if (historyGames.length === 0) {
         setHistorySummaries({});
         return;
       }
 
       try {
         const summaries = await Promise.all(
-          completedGames.map(async (historyGame) => {
+          historyGames.map(async (historyGame) => {
             const historyPlayers = await fetchPlayersByGameId(historyGame._id);
             const sortedByBalance = [...historyPlayers].sort(
               (playerA, playerB) => playerB.balance - playerA.balance
@@ -171,7 +174,7 @@ const HomePage = () => {
     };
 
     void loadHistorySummaries();
-  }, [completedGames]);
+  }, [historyGames]);
 
   const handleCreateGame = async () => {
     dispatch({ action: 'SET_LOADING', payload: true });
@@ -269,12 +272,16 @@ const HomePage = () => {
   };
 
   const handleExitGame = async () => {
+    if (!game) {
+      return;
+    }
+
     dispatch({ action: 'SET_LOADING', payload: true });
     dispatch({ action: 'SET_ERROR', payload: null });
 
     try {
-      if (game && game.status === 'IN_PROGRESS') {
-        await deleteGame(game._id);
+      if (game.status === 'IN_PROGRESS') {
+        await exitGame(game._id);
       }
 
       dispatch({ action: 'RESET_CURRENT_GAME' });
@@ -289,6 +296,104 @@ const HomePage = () => {
       });
     } finally {
       dispatch({ action: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const handleAbandonGame = async () => {
+    if (!game) {
+      return;
+    }
+
+    dispatch({ action: 'SET_LOADING', payload: true });
+    dispatch({ action: 'SET_ERROR', payload: null });
+
+    try {
+      await abandonGame(game._id);
+
+      dispatch({ action: 'RESET_CURRENT_GAME' });
+      setSelectedProperty(null);
+      setShowGameRoom(false);
+      await loadGameHistory();
+    } catch (abandonError) {
+      dispatch({
+        action: 'SET_ERROR',
+        payload:
+          abandonError instanceof Error
+            ? abandonError.message
+            : 'Failed to abandon the game',
+      });
+    } finally {
+      dispatch({ action: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const handleResumeGame = async (gameId: string) => {
+    dispatch({ action: 'SET_LOADING', payload: true });
+    dispatch({ action: 'SET_ERROR', payload: null });
+
+    try {
+      const data = await resumeGame(gameId);
+
+      dispatch({
+        action: 'SET_GAME_DETAILS',
+        payload: data,
+      });
+      setSelectedProperty(null);
+      setShowGameRoom(true);
+      await loadGameHistory();
+    } catch (resumeError) {
+      dispatch({
+        action: 'SET_ERROR',
+        payload:
+          resumeError instanceof Error ? resumeError.message : 'Failed to resume the game',
+      });
+    } finally {
+      dispatch({ action: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const handleRestartGame = async () => {
+    if (!game) {
+      return;
+    }
+
+    dispatch({ action: 'SET_LOADING', payload: true });
+    dispatch({ action: 'SET_ERROR', payload: null });
+
+    try {
+      const data = await restartGame(game._id);
+
+      dispatch({
+        action: 'SET_GAME_DETAILS',
+        payload: data,
+      });
+      setSelectedProperty(null);
+      setShowGameRoom(true);
+      await loadGameHistory();
+    } catch (restartError) {
+      dispatch({
+        action: 'SET_ERROR',
+        payload:
+          restartError instanceof Error
+            ? restartError.message
+            : 'Failed to restart the game',
+      });
+    } finally {
+      dispatch({ action: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const getHistoryStatusLabel = (status: string) => {
+    switch (status) {
+      case 'BANKRUPT_END':
+      case 'COMPLETED':
+        return 'Completed';
+      case 'ABANDONED':
+        return 'Abandoned';
+      case 'EXITED':
+        return 'Exited';
+      default:
+        return status.replace(/_/g, ' ');
     }
   };
 
@@ -329,16 +434,17 @@ const HomePage = () => {
             </button>
           </div>
 
-          {completedGames.length > 0 ? (
+          {historyGames.length > 0 ? (
             <section className="history-table landing-history-list" aria-label="Previous games">
               <div className="history-table-header">
                 <span>Game</span>
                 <span>Winner</span>
                 <span>Loser</span>
+                <span>Status</span>
               </div>
 
               <ul className="history-list history-table-rows">
-                {completedGames.map((historyGame) => (
+                {historyGames.map((historyGame) => (
                   <li
                     key={historyGame._id}
                     className="history-item history-item-static"
@@ -351,6 +457,22 @@ const HomePage = () => {
                     <span>
                       {historySummaries[historyGame._id]?.loserName ?? '-'} ($
                       {historySummaries[historyGame._id]?.loserBalance ?? '-'})
+                    </span>
+                    <span className="history-status-cell">
+                      {historyGame.status === 'EXITED' ? (
+                        <button
+                          className="secondary-button history-action-button"
+                          onClick={() => {
+                            void handleResumeGame(historyGame._id);
+                          }}
+                          disabled={loading}
+                          type="button"
+                        >
+                          Resume Game
+                        </button>
+                      ) : (
+                        getHistoryStatusLabel(historyGame.status)
+                      )}
                     </span>
                   </li>
                 ))}
@@ -409,6 +531,12 @@ const HomePage = () => {
       }}
       onExitGame={() => {
         void handleExitGame();
+      }}
+      onAbandonGame={() => {
+        void handleAbandonGame();
+      }}
+      onRestartGame={() => {
+        void handleRestartGame();
       }}
       onRefreshGameHistory={() => {
         void loadGameHistory();

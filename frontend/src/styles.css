@@ -96,7 +96,7 @@ button {
 
 .history-table-header {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   padding: 0 16px;
   font-size: 0.72rem;
@@ -572,7 +572,7 @@ button {
 }
 
 .board-center-tile span {
-  font-size: 0.78rem;
+  font-size: 0.78rem; 
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-weight: 800;
@@ -726,6 +726,17 @@ button {
   margin-top: 10px;
 }
 
+.abandon-game-button {
+  width: 100%;
+  margin-top: 10px;
+  background: #efd5cc;
+  color: #6d2f1f;
+}
+
+.restart-game-button {
+  white-space: nowrap;
+}
+
 .turn-stats {
   margin-top: 18px;
   display: grid;
@@ -840,7 +851,7 @@ button {
 
 .history-item {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   padding: 14px 16px;
   border-radius: 18px;
@@ -850,6 +861,15 @@ button {
 
 .history-item-static {
   cursor: default;
+}
+
+.history-status-cell {
+  display: flex;
+  align-items: center;
+}
+
+.history-action-button {
+  padding: 8px 14px;
 }
 
 .clickable-item {

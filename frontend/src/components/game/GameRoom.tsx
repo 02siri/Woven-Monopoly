@@ -38,6 +38,8 @@ type GameRoomProps = {
   onResolveTurn: () => void;
   onConfirmPendingAction: () => void;
   onExitGame: () => void;
+  onAbandonGame: () => void;
+  onRestartGame: () => void;
   onRefreshGameHistory: () => void;
   onLoadGameDetails: (gameId: string) => void;
   onSelectProperty: (property: Property | null) => void;
@@ -65,6 +67,8 @@ const GameRoom = ({
   onResolveTurn,
   onConfirmPendingAction,
   onExitGame,
+  onAbandonGame,
+  onRestartGame,
   onRefreshGameHistory,
   onLoadGameDetails,
   onSelectProperty,
@@ -95,8 +99,17 @@ const GameRoom = ({
         <header className="page-header">
           <div>
             <h1>Woven Monopoly</h1>
-            
           </div>
+          {game?.status === 'IN_PROGRESS' ? (
+            <button
+              className="secondary-button restart-game-button"
+              onClick={onRestartGame}
+              disabled={loading || !game}
+              type="button"
+            >
+              Restart Game
+            </button>
+          ) : null}
         </header>
 
         <NavbarInfoStrip
@@ -205,7 +218,7 @@ const GameRoom = ({
               ) : null}
             </div>
 
-           <DiceDisplay total={displayedDiceTotal} />
+            <DiceDisplay total={displayedDiceTotal} />
 
             <p className="dice-note">
               The roll display reflects the same deterministic turn logic already used by
@@ -233,6 +246,14 @@ const GameRoom = ({
                   type="button"
                 >
                   Exit Game
+                </button>
+                <button
+                  className="secondary-button abandon-game-button"
+                  onClick={onAbandonGame}
+                  disabled={loading || !game}
+                  type="button"
+                >
+                  Abandon Game
                 </button>
               </>
             ) : null}
