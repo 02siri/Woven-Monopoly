@@ -1,4 +1,9 @@
-export type GameStatus = 'IN_PROGRESS' | 'COMPLETED' | 'BANKRUPT_END';
+export type GameStatus =
+  | 'IN_PROGRESS'
+  | 'COMPLETED'
+  | 'BANKRUPT_END'
+  | 'EXITED'
+  | 'ABANDONED';
 
 export type PendingActionType = 'BUY_PROPERTY' | 'PAY_RENT' | 'COLLECT_GO';
 

@@ -21,7 +21,7 @@ const gamesSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: ['IN_PROGRESS', 'COMPLETED', 'BANKRUPT_END'],
+      enum: ['IN_PROGRESS', 'COMPLETED', 'BANKRUPT_END', 'EXITED', 'ABANDONED'],
       default: 'IN_PROGRESS',
     },
     currentTurn: {
