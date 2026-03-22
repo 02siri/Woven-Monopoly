@@ -29,3 +29,10 @@ export type ResolveTurnResponse = {
 };
 
 export type ConfirmActionResponse = ResolveTurnResponse;
+
+export type GameDetailsResponse = {
+  game: Game;
+  players: Player[];
+  properties: Property[];
+  turns: Turn[];
+};

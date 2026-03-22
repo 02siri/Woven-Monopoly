@@ -1,6 +1,7 @@
 import type {
   ConfirmActionResponse,
   CreateGameResponse,
+  GameDetailsResponse,
   ResolveTurnResponse,
   SimulateGameResponse,
 } from '../types/api.types';
@@ -19,6 +20,30 @@ export const createGame = () => {
 export const deleteGame = (gameId: string) => {
   return request<{ gameId: string; deleted: boolean }>(`/games/delete/${gameId}`, {
     method: 'DELETE',
+  });
+};
+
+export const exitGame = (gameId: string) => {
+  return request<Game>(`/games/${gameId}/exit`, {
+    method: 'POST',
+  });
+};
+
+export const abandonGame = (gameId: string) => {
+  return request<Game>(`/games/${gameId}/abandon`, {
+    method: 'POST',
+  });
+};
+
+export const resumeGame = (gameId: string) => {
+  return request<GameDetailsResponse>(`/games/${gameId}/resume`, {
+    method: 'POST',
+  });
+};
+
+export const restartGame = (gameId: string) => {
+  return request<GameDetailsResponse>(`/games/${gameId}/restart`, {
+    method: 'POST',
   });
 };
 
