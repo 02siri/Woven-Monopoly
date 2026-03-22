@@ -594,9 +594,15 @@ button {
 .player-card {
   position: relative;
   overflow: hidden;
-  min-height: 196px;
+  min-height: 228px;
   max-width: 100%;
   min-width: 0;
+  padding-top: 18px;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
 }
 
 .player-card::before {
@@ -626,12 +632,84 @@ button {
 .player-card-heading {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
+}
+
+.player-avatar-shell {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.player-avatar {
+  width: 64px;
+  height: 64px;
+  display: block;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+}
+
+.player-chip {
+  position: absolute;
+  right: -4px;
+  bottom: -2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 3px solid #fff9ee;
+}
+
+.player-heading-copy {
+  min-width: 0;
+}
+
+.player-heading-copy h3 {
+  margin: 0;
+}
+
+.player-role-label {
+  margin: 4px 0 0;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: rgba(67, 100, 114, 0.88);
 }
 
 .current-card {
-  outline: 2px solid rgba(34, 116, 95, 0.85);
-  outline-offset: 3px;
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(16, 111, 87, 0.75);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(226, 248, 236, 0.94));
+  box-shadow:
+    0 0 0 3px rgba(35, 150, 110, 0.18),
+    0 22px 36px rgba(17, 90, 73, 0.16);
+}
+
+.turn-callout {
+  margin: 0 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(17, 90, 73, 0.1);
+  color: #0b7663;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.turn-callout::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #14b87a;
+  box-shadow: 0 0 0 6px rgba(20, 184, 122, 0.15);
+  animation: playerTurnPulse 1.8s ease-in-out infinite;
 }
 
 .metric-grid {
@@ -667,6 +745,12 @@ button {
   color: #1e7148;
 }
 
+.current-turn-badge {
+  background: linear-gradient(180deg, #0e7f68, #0b5c4c);
+  color: #f4fffb;
+  box-shadow: 0 10px 18px rgba(11, 92, 76, 0.18);
+}
+
 .danger-badge {
   background: #f8d8d8;
   color: #a12f2f;
@@ -676,6 +760,10 @@ button {
   margin-top: 14px;
   background: #fde8a7;
   color: #7c5c15;
+}
+
+.player-subtext {
+  margin-top: 12px;
 }
 
 .sidebar-stack {
@@ -857,6 +945,19 @@ button {
   border-radius: 18px;
   background: rgba(247, 241, 227, 0.92);
   color: #403424;
+}
+
+@keyframes playerTurnPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(0.88);
+    opacity: 0.7;
+  }
 }
 
 .history-item-static {
