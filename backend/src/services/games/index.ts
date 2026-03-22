@@ -2,6 +2,12 @@ export { createGame } from './create-game.service';
 export { confirmAction } from './confirm-action.service';
 export { deleteGame } from './delete-game.service';
 export {
+  abandonGame,
+  exitGame,
+  restartGame,
+  resumeGame,
+} from './game-lifecycle.service';
+export {
   getGameById,
   getGames,
   getPlayersByGameId,

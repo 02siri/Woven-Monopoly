@@ -1,13 +1,17 @@
 import { type Request, type Response } from 'express';
 import {
+  abandonGame,
   confirmAction,
   createGame,
   deleteGame,
+  exitGame,
   getGameById,
   getGames,
   getPlayersByGameId,
   getPropertiesByGameId,
+  restartGame,
   resolveTurn,
+  resumeGame,
   simulateGame,
   getTurnsByGameId,
 } from '../services/games';
@@ -101,6 +105,110 @@ export const deleteGameHandler = async (req: Request, res: Response) => {
     }
 
     res.status(500).json({
+      message,
+    });
+  }
+};
+
+export const exitGameHandler = async (req: Request, res: Response) => {
+  try {
+    const gameId = getGameIdParam(req.params.gameId);
+    const data = await exitGame(gameId);
+
+    res.status(200).json({
+      message: 'Game exited successfully',
+      data,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'An unexpected error occurred';
+
+    if (message === 'Game not found') {
+      res.status(404).json({
+        message,
+      });
+      return;
+    }
+
+    res.status(400).json({
+      message,
+    });
+  }
+};
+
+export const abandonGameHandler = async (req: Request, res: Response) => {
+  try {
+    const gameId = getGameIdParam(req.params.gameId);
+    const data = await abandonGame(gameId);
+
+    res.status(200).json({
+      message: 'Game abandoned successfully',
+      data,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'An unexpected error occurred';
+
+    if (message === 'Game not found') {
+      res.status(404).json({
+        message,
+      });
+      return;
+    }
+
+    res.status(400).json({
+      message,
+    });
+  }
+};
+
+export const resumeGameHandler = async (req: Request, res: Response) => {
+  try {
+    const gameId = getGameIdParam(req.params.gameId);
+    const data = await resumeGame(gameId);
+
+    res.status(200).json({
+      message: 'Game resumed successfully',
+      data,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'An unexpected error occurred';
+
+    if (message === 'Game not found') {
+      res.status(404).json({
+        message,
+      });
+      return;
+    }
+
+    res.status(400).json({
+      message,
+    });
+  }
+};
+
+export const restartGameHandler = async (req: Request, res: Response) => {
+  try {
+    const gameId = getGameIdParam(req.params.gameId);
+    const data = await restartGame(gameId);
+
+    res.status(200).json({
+      message: 'Game restarted successfully',
+      data,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'An unexpected error occurred';
+
+    if (message === 'Game not found') {
+      res.status(404).json({
+        message,
+      });
+      return;
+    }
+
+    res.status(400).json({
       message,
     });
   }
