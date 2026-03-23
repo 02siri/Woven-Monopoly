@@ -15,18 +15,8 @@ const PLAYER_AVATAR_URLS: Record<string, string> = {
 };
 
 const PlayerCard = ({ player, isCurrentTurn, isWinner, propertyCount }: PlayerCardProps) => {
-  const statusLabel = player.isBankrupt
-    ? 'Bankrupt'
-    : isCurrentTurn
-      ? 'Current Turn'
-      : 'Active';
   const playerToneClass = `player-tone-${player.turnOrder}`;
-  const statusToneClass = player.isBankrupt
-    ? 'danger-badge'
-    : isCurrentTurn
-      ? 'current-turn-badge'
-      : 'success-badge';
-  const avatarUrl = PLAYER_AVATAR_URLS[player.name] ?? "https://api.dicebear.com/9.x/bottts/svg?seed=Eliza";
+  const avatarUrl = PLAYER_AVATAR_URLS[player.name] ?? PLAYER_AVATAR_URLS.Peter;
 
   return (
     <article
@@ -45,9 +35,6 @@ const PlayerCard = ({ player, isCurrentTurn, isWinner, propertyCount }: PlayerCa
             <p className="player-role-label">Player {player.turnOrder}</p>
           </div>
         </div>
-        <span className={`status-badge ${statusToneClass}`}>
-          {statusLabel}
-        </span>
       </div>
 
       <p className="card-subtext player-subtext">
@@ -83,6 +70,7 @@ const PlayerCard = ({ player, isCurrentTurn, isWinner, propertyCount }: PlayerCa
       </p>
 
       {isWinner ? <p className="winner-tag">Winner</p> : null}
+      {player.isBankrupt ? <p className="winner-tag bankrupt-tag">Bankrupt</p> : null}
     </article>
   );
 };
