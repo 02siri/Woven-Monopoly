@@ -60,8 +60,8 @@ const HomePage = () => {
     () => ({
       topLeft: playersByTurnOrder[0] ?? null,
       topRight: playersByTurnOrder[1] ?? null,
-      bottomLeft: playersByTurnOrder[2] ?? null,
-      bottomRight: playersByTurnOrder[3] ?? null,
+      bottomLeft: playersByTurnOrder[3] ?? null,
+      bottomRight: playersByTurnOrder[2] ?? null,
     }),
     [playersByTurnOrder]
   );
