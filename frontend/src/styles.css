@@ -363,6 +363,7 @@ button {
 }
 
 .board-shell {
+  position: relative;
   padding: 16px;
   min-width: 0;
   width: 100%;
@@ -370,6 +371,7 @@ button {
 }
 
 .board-grid {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-template-rows: repeat(4, minmax(0, 1fr));
@@ -511,6 +513,13 @@ button {
   align-items: center;
 }
 
+.board-token-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
 .board-token,
 .player-chip {
   display: block;
@@ -521,6 +530,18 @@ button {
 .board-token {
   width: 34px;
   height: 34px;
+}
+
+.board-token-animated {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: center bottom;
+  will-change: transform;
+}
+
+.board-token-active {
+  filter: drop-shadow(0 10px 16px rgba(16, 111, 87, 0.28));
 }
 
 .active-tile {
