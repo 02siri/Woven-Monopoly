@@ -76,7 +76,7 @@ const GameRoom = ({
   const isGameOver = Boolean(game && game.status !== 'IN_PROGRESS');
   const [showGameOverModal, setShowGameOverModal] = useState(false);
   const isPending = pendingAction !== null;
-const isRollingDice = loading && game?.status === 'IN_PROGRESS' && !isPending; 
+  const isRollingDice = loading && game?.status === 'IN_PROGRESS' && !isPending;
 
   const displayedDiceTotal = isPending
     ? game?.pendingTurnData?.diceRoll ?? null
@@ -291,13 +291,23 @@ const isRollingDice = loading && game?.status === 'IN_PROGRESS' && !isPending;
 
       {showGameOverModal ? (
         <div className="game-over-backdrop" role="presentation">
-          <section className="game-over-modal" role="dialog" aria-modal="true">
-            <h2>Game Over!</h2>
-            <p>
-              {winner ? `${winner.name} wins this round.` : 'This game has finished.'}
-            </p>
+          <section className="game-over-modal celebration-modal celebration-modal-win" role="dialog" aria-modal="true">
+            <div className="confetti-cloud" aria-hidden="true">
+              {Array.from({ length: 132 }).map((_, index) => (
+                <span key={index} className={`confetti-piece confetti-piece-${(index % 6) + 1}`} />
+              ))}
+            </div>
+            <div className="celebration-halo celebration-halo-win" aria-hidden="true">
+              <span className="celebration-halo-orb" />
+              <span className="celebration-halo-ring" />
+            </div>
+            <div className="winner-medallion" aria-hidden="true">
+              <span className="winner-medallion-star">★</span>
+            </div>
+            <p className="celebration-kicker">Congratulations!</p>
+            <h2>{winner ? `${winner.name} Won!` : 'Game Finished!'}</h2>
             <button
-              className="primary-button"
+              className="primary-button celebration-button celebration-button-win"
               onClick={() => {
                 setShowGameOverModal(false);
                 onExitGame();
