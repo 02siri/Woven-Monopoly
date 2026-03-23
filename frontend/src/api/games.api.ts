@@ -17,11 +17,11 @@ export const createGame = () => {
   });
 };
 
-export const deleteGame = (gameId: string) => {
-  return request<{ gameId: string; deleted: boolean }>(`/games/delete/${gameId}`, {
-    method: 'DELETE',
-  });
-};
+// export const deleteGame = (gameId: string) => {
+//   return request<{ gameId: string; deleted: boolean }>(`/games/delete/${gameId}`, {
+//     method: 'DELETE',
+//   });
+// };
 
 export const exitGame = (gameId: string) => {
   return request<Game>(`/games/${gameId}/exit`, {

@@ -3,7 +3,6 @@ import {
   abandonGameHandler,
   confirmActionHandler,
   createGameHandler,
-  deleteGameHandler,
   exitGameHandler,
   getGameByIdHandler,
   getGamesHandler,
@@ -36,6 +35,6 @@ router.post('/games/:gameId/actions/confirm', confirmActionHandler);
 
 router.post('/games/:gameId/simulate', simulateGameHandler);
 
-router.delete('/games/delete/:gameId', deleteGameHandler);
+// router.delete('/games/delete/:gameId', deleteGameHandler);
 
 export default router;

@@ -1,6 +1,6 @@
 export { createGame } from './create-game.service';
 export { confirmAction } from './confirm-action.service';
-export { deleteGame } from './delete-game.service';
+// export { deleteGame } from './delete-game.service';
 export {
   abandonGame,
   exitGame,
