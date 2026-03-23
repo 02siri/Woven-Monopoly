@@ -59,8 +59,14 @@ export const resolveTurn = async (gameId: string) => {
 
   if (turnResult.pendingAction) {
     game.pendingActionType = turnResult.pendingAction.type;
-    game.pendingActionData = turnResult.pendingAction;
-    game.pendingTurnData = turnResult.pendingTurnData;
+    game.pendingActionData = { ...turnResult.pendingAction };
+    game.pendingTurnData = {
+      ...turnResult.pendingTurnData,
+      actionQueue: [...turnResult.pendingTurnData.actionQueue],
+      noteParts: [...turnResult.pendingTurnData.noteParts],
+    };
+    game.markModified('pendingActionData');
+    game.markModified('pendingTurnData');
 
     await Promise.all(players.map((player) => player.save()));
     await game.save();

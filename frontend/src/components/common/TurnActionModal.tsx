@@ -20,6 +20,7 @@ const TurnActionModal = ({
   onConfirm,
 }: TurnActionModalProps) => {
   const showPropertyDetails = action.type === 'BUY_PROPERTY' && property !== null;
+  const showRentDetails = action.type === 'PAY_RENT' && property !== null;
   const sameColourProperties = property
     ? properties.filter((currentProperty) => currentProperty.colour === property.colour)
     : [];
@@ -32,11 +33,22 @@ const TurnActionModal = ({
     );
 
   const effectiveRent =
-    property !== null ? (ownerHasMonopoly ? property.baseRent * 2 : property.baseRent) : null;
+    action.type === 'PAY_RENT'
+      ? action.amount
+      : property !== null
+        ? ownerHasMonopoly
+          ? property.baseRent * 2
+          : property.baseRent
+        : null;
   const resolvedOwner =
     property?.owner !== null
       ? players.find((player) => player._id === property?.owner)?.name ?? 'Unowned'
       : 'Unowned';
+  const isDoubleRent = showRentDetails && ownerHasMonopoly;
+  const actionTitle = isDoubleRent ? 'Pay Double Rent' : action.title;
+  const actionDescription = isDoubleRent
+    ? `${resolvedOwner} owns the full ${property?.colour} set, so this landing triggers double rent on ${property?.name}.`
+    : action.description;
 
   return (
     <div className="modal-backdrop" role="presentation">
@@ -51,8 +63,13 @@ const TurnActionModal = ({
           <div className={`property-banner property-banner-${property.colour.toLowerCase()}`} />
         ) : null}
         <p className="eyebrow">Required Action</p>
-        <h3>{action.title}</h3>
-        <p className="modal-note">{action.description}</p>
+        <h3>{actionTitle}</h3>
+        <p className="modal-note">{actionDescription}</p>
+        {isDoubleRent ? (
+          <p className="modal-reason">
+            Monopoly ownership doubles the rent on this property.
+          </p>
+        ) : null}
 
         {showPropertyDetails ? (
           <div className="modal-metrics">
@@ -61,6 +78,14 @@ const TurnActionModal = ({
             <p><strong>Base Rent:</strong> ${property.baseRent}</p>
             <p><strong>Current Rent:</strong> ${effectiveRent ?? property.baseRent}</p>
             <p><strong>Owner:</strong> {resolvedOwner}</p>
+          </div>
+        ) : null}
+        {showRentDetails ? (
+          <div className="modal-metrics">
+            <p><strong>Property:</strong> {property.name}</p>
+            <p><strong>Owner:</strong> {resolvedOwner}</p>
+            <p><strong>Base Rent:</strong> ${property.baseRent}</p>
+            <p><strong>Rent Due:</strong> ${action.amount}</p>
           </div>
         ) : null}
 

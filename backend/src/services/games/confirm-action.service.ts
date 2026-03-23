@@ -83,17 +83,20 @@ export const confirmAction = async (gameId: string) => {
       throw new Error('Unsupported pending action');
   }
 
-  pendingTurnData.actionQueue = pendingTurnData.actionQueue.slice(1);
+  const remainingActions = pendingTurnData.actionQueue.slice(1);
+  const updatedPendingTurnData: PendingTurnData = {
+    ...pendingTurnData,
+    actionQueue: activePlayer.balance < 0 ? [] : remainingActions,
+    noteParts: [...pendingTurnData.noteParts],
+  };
 
-  if (activePlayer.balance < 0) {
-    pendingTurnData.actionQueue = [];
-  }
-
-  if (pendingTurnData.actionQueue.length > 0) {
-    const nextPendingAction = pendingTurnData.actionQueue[0];
+  if (updatedPendingTurnData.actionQueue.length > 0) {
+    const nextPendingAction = updatedPendingTurnData.actionQueue[0];
     game.pendingActionType = nextPendingAction.type;
     game.pendingActionData = nextPendingAction;
-    game.pendingTurnData = pendingTurnData;
+    game.pendingTurnData = updatedPendingTurnData;
+    game.markModified('pendingActionData');
+    game.markModified('pendingTurnData');
 
     await Promise.all(players.map((player) => player.save()));
     await Promise.all(properties.map((property) => property.save()));
@@ -116,7 +119,7 @@ export const confirmAction = async (gameId: string) => {
     players,
     activePlayer,
     activePlayerIndex,
-    pendingTurnData,
+    pendingTurnData: updatedPendingTurnData,
     turnTimestamp,
     finalActionType:
       pendingAction.type === 'COLLECT_GO' ? 'PASS_GO' : pendingAction.type,
@@ -124,15 +127,15 @@ export const confirmAction = async (gameId: string) => {
 
   const createdTurn = await TurnsModel.create({
     gameId: game._id,
-    turnNumber: pendingTurnData.turnNumber,
+    turnNumber: updatedPendingTurnData.turnNumber,
     playerId: activePlayer._id,
-    diceRoll: pendingTurnData.diceRoll,
-    startPosition: pendingTurnData.startPosition,
-    endPosition: pendingTurnData.endPosition,
-    passedGo: pendingTurnData.passedGo,
+    diceRoll: updatedPendingTurnData.diceRoll,
+    startPosition: updatedPendingTurnData.startPosition,
+    endPosition: updatedPendingTurnData.endPosition,
+    passedGo: updatedPendingTurnData.passedGo,
     actionType: finalized.actionType,
-    propertyId: pendingTurnData.propertyId,
-    transactionAmount: pendingTurnData.transactionAmount,
+    propertyId: updatedPendingTurnData.propertyId,
+    transactionAmount: updatedPendingTurnData.transactionAmount,
     balanceAfterTurn: activePlayer.balance,
     notes: activePlayer.lastAction,
     createdAt: turnTimestamp,
