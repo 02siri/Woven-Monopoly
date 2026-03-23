@@ -1,5 +1,6 @@
 import type { Player } from '../../types/player.types';
 import type { Property } from '../../types/property.types';
+import { PLAYER_TOKEN_IMAGES } from '../../constants/playerVisuals';
 
 type BoardTile = {
   index: number;
@@ -39,8 +40,6 @@ const COLOUR_CLASS_MAP: Record<string, string> = {
   Green: 'colour-green',
   Blue: 'colour-blue',
 };
-
-const PLAYER_COLOURS = ['token-red', 'token-blue', 'token-green', 'token-yellow'];
 
 const GameBoard = ({
   players,
@@ -106,9 +105,11 @@ const GameBoard = ({
               {tilePlayers.length > 0 ? (
                 <div className="tile-tokens">
                   {tilePlayers.map((player) => (
-                    <span
+                    <img
                       key={player._id}
-                      className={`board-token ${PLAYER_COLOURS[player.turnOrder - 1]}`}
+                      className="board-token"
+                      src={PLAYER_TOKEN_IMAGES[player.name] ?? PLAYER_TOKEN_IMAGES.Peter}
+                      alt={`${player.name} token`}
                       title={player.name}
                     />
                   ))}

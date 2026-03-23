@@ -1,4 +1,5 @@
 import type { Player } from '../../types/player.types';
+import { PLAYER_AVATAR_URLS, PLAYER_TOKEN_IMAGES } from '../../constants/playerVisuals';
 
 type PlayerCardProps = {
   player: Player;
@@ -7,20 +8,13 @@ type PlayerCardProps = {
   propertyCount: number;
 };
 
-const PLAYER_AVATAR_URLS: Record<string, string> = {
-  Peter: 'https://api.dicebear.com/9.x/toon-head/svg?seed=Easton',
-  Billy: 'https://api.dicebear.com/9.x/toon-head/svg?seed=Luis',
-  Charlotte: 'https://api.dicebear.com/9.x/toon-head/svg?seed=Riley',
-  Sweedal: 'https://api.dicebear.com/9.x/toon-head/svg?seed=Andrea',
-};
-
 const PlayerCard = ({ player, isCurrentTurn, isWinner, propertyCount }: PlayerCardProps) => {
-  const playerToneClass = `player-tone-${player.turnOrder}`;
   const avatarUrl = PLAYER_AVATAR_URLS[player.name] ?? PLAYER_AVATAR_URLS.Peter;
+  const playerToken = PLAYER_TOKEN_IMAGES[player.name] ?? PLAYER_TOKEN_IMAGES.Peter;
 
   return (
     <article
-      className={`card player-card ${playerToneClass} ${isCurrentTurn ? 'current-card' : ''}`}
+      className={`card player-card ${isCurrentTurn ? 'current-card' : ''}`}
     >
       {isCurrentTurn ? <p className="turn-callout">Now playing</p> : null}
 
@@ -28,7 +22,11 @@ const PlayerCard = ({ player, isCurrentTurn, isWinner, propertyCount }: PlayerCa
         <div className="player-card-heading">
           <div className="player-avatar-shell">
             <img className="player-avatar" src={avatarUrl} alt={`${player.name} avatar`} />
-            <span className="player-chip" aria-hidden="true" />
+            <img
+              className="player-chip"
+              src={playerToken}
+              alt={`${player.name} token`}
+            />
           </div>
           <div className="player-heading-copy">
             <h3>{player.name}</h3>

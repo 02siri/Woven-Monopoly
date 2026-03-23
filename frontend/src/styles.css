@@ -508,38 +508,19 @@ button {
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 10px;
+  align-items: center;
 }
 
 .board-token,
 .player-chip {
-  width: 16px;
-  height: 16px;
-  border-radius: 999px;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(15, 23, 42, 0.16));
 }
 
 .board-token {
-  border: 2px solid rgba(255, 255, 255, 0.92);
-}
-
-.token-red,
-.player-tone-1 .player-chip {
-  background: #ef4444;
-}
-
-.token-blue,
-.player-tone-2 .player-chip {
-  background: #2563eb;
-}
-
-.token-green,
-.player-tone-3 .player-chip {
-  background: #22c55e;
-}
-
-.token-yellow,
-.player-tone-4 .player-chip {
-  background: #facc15;
+  width: 34px;
+  height: 34px;
 }
 
 .active-tile {
@@ -621,23 +602,7 @@ button {
   position: absolute;
   inset: 0 auto 0 0;
   width: 6px;
-  background: var(--player-tone, #c5a76a);
-}
-
-.player-tone-1 {
-  --player-tone: #ef4444;
-}
-
-.player-tone-2 {
-  --player-tone: #2563eb;
-}
-
-.player-tone-3 {
-  --player-tone: #22c55e;
-}
-
-.player-tone-4 {
-  --player-tone: #facc15;
+  background: #c5a76a;
 }
 
 .player-card-heading {
@@ -652,8 +617,8 @@ button {
 }
 
 .player-avatar {
-  width: 64px;
-  height: 64px;
+  width: 78px;
+  height: 78px;
   display: block;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.75);
@@ -663,12 +628,15 @@ button {
 
 .player-chip {
   position: absolute;
-  right: -4px;
-  bottom: -2px;
-  width: 18px;
-  height: 18px;
+  right: -10px;
+  bottom: -8px;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
   border-radius: 999px;
+  background: #fff9ee;
   border: 3px solid #fff9ee;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16);
 }
 
 .player-heading-copy {
