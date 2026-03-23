@@ -1,5 +1,5 @@
 import { ensureAppReady } from '../../src/lib/app-init';
-import { jsonResponse, optionsResponse, type RouteContext } from '../../src/lib/http';
+import { jsonResponse, optionsResponse } from '../../src/lib/http';
 import {
   abandonGame,
   confirmAction,
@@ -17,11 +17,18 @@ import {
   simulateGame,
 } from '../../src/services/games';
 
-type CatchAllContext = RouteContext<{ route?: string[] }>;
+const getRouteSegments = (request: Request) => {
+  const pathname = new URL(request.url).pathname;
+  const v1Index = pathname.indexOf('/api/v1');
 
-const getRouteSegments = async (context: CatchAllContext) => {
-  const params = await context.params;
-  return params.route ?? [];
+  if (v1Index === -1) {
+    return [];
+  }
+
+  return pathname
+    .slice(v1Index + '/api/v1'.length)
+    .split('/')
+    .filter(Boolean);
 };
 
 const getErrorMessage = (error: unknown) =>
@@ -226,8 +233,8 @@ export function OPTIONS() {
   return optionsResponse();
 }
 
-export async function GET(_request: Request, context: CatchAllContext) {
-  const segments = await getRouteSegments(context);
+export async function GET(request: Request) {
+  const segments = getRouteSegments(request);
 
   try {
     await ensureAppReady();
@@ -241,8 +248,8 @@ export async function GET(_request: Request, context: CatchAllContext) {
   }
 }
 
-export async function POST(_request: Request, context: CatchAllContext) {
-  const segments = await getRouteSegments(context);
+export async function POST(request: Request) {
+  const segments = getRouteSegments(request);
 
   try {
     await ensureAppReady();
@@ -256,8 +263,8 @@ export async function POST(_request: Request, context: CatchAllContext) {
   }
 }
 
-export async function DELETE(_request: Request, context: CatchAllContext) {
-  const segments = await getRouteSegments(context);
+export async function DELETE(request: Request) {
+  const segments = getRouteSegments(request);
 
   try {
     await ensureAppReady();
