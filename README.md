@@ -16,8 +16,8 @@ The project is intentionally built as a modular monolith:
 
 Detailed module documentation:
 
-- [Backend README](/Users/srishtikhosla/Documents/New project/backend/README.md)
-- [Frontend README](/Users/srishtikhosla/Documents/New project/frontend/README.md)
+- Backend README: (Woven-Monopoly/backend/README.md)
+- Frontend README: (Woven-Monopoly/frontend/README.md)
 
 ## Gameplay Summary
 The game is driven by known dice rolls, so every move is reproducible. That allows the application to:
