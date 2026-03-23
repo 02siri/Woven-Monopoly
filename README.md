@@ -91,7 +91,6 @@ This implementation reflects a few deliberate architectural decisions:
 │   ├── README.md
 │   ├── package.json
 │   └── src/
-└── woven-monopoly-walkthrough-script.md
 ```
 
 ## Running Locally
