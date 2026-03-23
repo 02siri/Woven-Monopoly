@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 import loadBoardIntoDatabase from '../loaders/board.loader';
 
 type AppBootstrapCache = {
-  boardInitPromise?: Promise<unknown>;
   mongooseConnectionPromise?: Promise<typeof mongoose>;
 };
 
@@ -23,11 +22,7 @@ const connectToDatabase = async () => {
 };
 
 const ensureBoardIsLoaded = async () => {
-  if (!globalForBootstrap.boardInitPromise) {
-    globalForBootstrap.boardInitPromise = loadBoardIntoDatabase();
-  }
-
-  await globalForBootstrap.boardInitPromise;
+  await loadBoardIntoDatabase();
 };
 
 export const ensureAppReady = async () => {
