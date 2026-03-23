@@ -423,16 +423,16 @@ button {
 .experience-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 24px;
+  gap: 20px;
   align-items: start;
 }
 
 .board-stage {
-  padding: 22px;
+  padding: 18px;
 }
 
 .stage-heading {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .stage-heading h2 {
@@ -448,15 +448,15 @@ button {
 .board-stage-grid {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr) minmax(180px, 240px);
-  grid-template-rows: 220px minmax(520px, 1fr) 220px;
+  grid-template-columns: minmax(165px, 220px) minmax(0, 1fr) minmax(165px, 220px);
+  grid-template-rows: 200px minmax(460px, 1fr) 200px;
   grid-template-areas:
     "top-left board top-right"
     "left-gap board right-gap"
     "bottom-left board bottom-right";
   align-items: stretch;
-  min-height: 980px;
-  padding: 16px;
+  min-height: 860px;
+  padding: 12px;
   border-radius: 30px;
   background:
     linear-gradient(180deg, rgba(232, 246, 235, 0.96), rgba(219, 238, 248, 0.96)),
@@ -508,14 +508,14 @@ button {
 
 .board-slot {
   grid-area: board;
-  padding: 28px;
+  padding: 18px;
   min-width: 0;
   overflow: hidden;
 }
 
 .board-shell {
   position: relative;
-  padding: 16px;
+  padding: 12px;
   min-width: 0;
   width: 100%;
   border-radius: 0;
@@ -528,7 +528,7 @@ button {
   grid-template-rows: repeat(4, minmax(0, 1fr));
   display: grid;
   aspect-ratio: 1 / 1;
-  min-height: 640px;
+  min-height: 560px;
   overflow: hidden;
   background:
     linear-gradient(180deg, #edf9ef 0%, #daf3e7 100%);
