@@ -400,108 +400,103 @@ const HomePage = () => {
   const startTurnLabel = turns.length === 0 ? 'Start' : 'Play Turn';
   const canCreateGame = !game || game.status !== 'IN_PROGRESS';
   const showBoard = properties.length > 0;
+  const pageContent = !showGameRoom ? (
+    <main className="monopoly-page landing-page">
+      <section className="landing-hero">
+        <p className="eyebrow">Woven Monopoly</p>
+        <h1>Woven Monopoly</h1>
+        <p className="landing-copy">
+          Build your position, buy restaurants automatically when you land on them,
+          and outlast the table with deterministic turn resolution.
+        </p>
+        <button
+          className="primary-button landing-start-button"
+          onClick={handleCreateGame}
+          disabled={loading || !canCreateGame}
+        >
+          {loading ? 'Creating...' : 'Start Game'}
+        </button>
+        {error ? <p className="error-text landing-error">{error}</p> : null}
+      </section>
 
-  if (!showGameRoom) {
-    return (
-      <main className="monopoly-page landing-page">
-        <section className="landing-hero">
-          <p className="eyebrow">Woven Monopoly</p>
-          <h1>Woven Monopoly</h1>
-          <p className="landing-copy">
-            Build your position, buy restaurants automatically when you land on them,
-            and outlast the table with deterministic turn resolution.
-          </p>
+      <section className="landing-panel previous-games-panel panel">
+        <div className="panel-header">
+          <h2>Previous Games</h2>
           <button
-            className="primary-button landing-start-button"
-            onClick={handleCreateGame}
-            disabled={loading || !canCreateGame}
+            className="text-button"
+            onClick={() => {
+              void loadGameHistory();
+            }}
           >
-            {loading ? 'Creating...' : 'Start Game'}
+            Refresh
           </button>
-          {error ? <p className="error-text landing-error">{error}</p> : null}
-        </section>
+        </div>
 
-        <section className="landing-panel previous-games-panel panel">
-          <div className="panel-header">
-            <h2>Previous Games</h2>
-            <button
-              className="text-button"
-              onClick={() => {
-                void loadGameHistory();
-              }}
-            >
-              Refresh
-            </button>
-          </div>
-
-          {historyGames.length > 0 ? (
-            <section className="history-table landing-history-list" aria-label="Previous games">
-              <div className="history-table-header">
-                <span>Game</span>
-                <span>Winner</span>
-                <span>Loser</span>
-                <span>Status</span>
-              </div>
-
-              <ul className="history-list history-table-rows">
-                {historyGames.map((historyGame) => (
-                  <li
-                    key={historyGame._id}
-                    className="history-item history-item-static"
-                  >
-                    <span>Game {historyGame.gameNumber}</span>
-                    <span>
-                      {historySummaries[historyGame._id]?.winnerName ?? '-'} ($
-                      {historySummaries[historyGame._id]?.winnerBalance ?? '-'})
-                    </span>
-                    <span>
-                      {historySummaries[historyGame._id]?.loserName ?? '-'} ($
-                      {historySummaries[historyGame._id]?.loserBalance ?? '-'})
-                    </span>
-                    <span className="history-status-cell">
-                      {historyGame.status === 'EXITED' ? (
-                        <button
-                          className="secondary-button history-action-button"
-                          onClick={() => {
-                            void handleResumeGame(historyGame._id);
-                          }}
-                          disabled={loading}
-                          type="button"
-                        >
-                          Resume Game
-                        </button>
-                      ) : (
-                        getHistoryStatusLabel(historyGame.status)
-                      )}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : (
-            <div className="landing-empty-state">
-              <p>No games played yet</p>
-              <span>Start your first game to see history here.</span>
+        {historyGames.length > 0 ? (
+          <section className="history-table landing-history-list" aria-label="Previous games">
+            <div className="history-table-header">
+              <span>Game</span>
+              <span>Winner</span>
+              <span>Loser</span>
+              <span>Status</span>
             </div>
-          )}
-        </section>
 
-        <section className="landing-panel rules-panel panel">
-          <h2>How to Play</h2>
-          <ul className="rules-list">
-            <li>Each new game starts with four players and a fixed deterministic roll set.</li>
-            <li>Press `Start Game` to create a game, then resolve turns one by one.</li>
-            <li>Players move using the next value from the game&apos;s predefined roll sequence.</li>
-            <li>Landing on an unowned property buys it automatically if the player can afford it.</li>
-            <li>Landing on another player&apos;s property pays rent based on ownership and monopoly state.</li>
-            <li>The game ends when a winner is determined by the backend game rules.</li>
-          </ul>
-        </section>
-      </main>
-    );
-  }
+            <ul className="history-list history-table-rows">
+              {historyGames.map((historyGame) => (
+                <li
+                  key={historyGame._id}
+                  className="history-item history-item-static"
+                >
+                  <span>Game {historyGame.gameNumber}</span>
+                  <span>
+                    {historySummaries[historyGame._id]?.winnerName ?? '-'} ($
+                    {historySummaries[historyGame._id]?.winnerBalance ?? '-'})
+                  </span>
+                  <span>
+                    {historySummaries[historyGame._id]?.loserName ?? '-'} ($
+                    {historySummaries[historyGame._id]?.loserBalance ?? '-'})
+                  </span>
+                  <span className="history-status-cell">
+                    {historyGame.status === 'EXITED' ? (
+                      <button
+                        className="secondary-button history-action-button"
+                        onClick={() => {
+                          void handleResumeGame(historyGame._id);
+                        }}
+                        disabled={loading}
+                        type="button"
+                      >
+                        Resume Game
+                      </button>
+                    ) : (
+                      getHistoryStatusLabel(historyGame.status)
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : (
+          <div className="landing-empty-state">
+            <p>No games played yet</p>
+            <span>Start your first game to see history here.</span>
+          </div>
+        )}
+      </section>
 
-  return (
+      <section className="landing-panel rules-panel panel">
+        <h2>How to Play</h2>
+        <ul className="rules-list">
+          <li>Each new game starts with four players and a fixed deterministic roll set.</li>
+          <li>Press `Start Game` to create a game, then resolve turns one by one.</li>
+          <li>Players move using the next value from the game&apos;s predefined roll sequence.</li>
+          <li>Landing on an unowned property buys it automatically if the player can afford it.</li>
+          <li>Landing on another player&apos;s property pays rent based on ownership and monopoly state.</li>
+          <li>The game ends when a winner is determined by the backend game rules.</li>
+        </ul>
+      </section>
+    </main>
+  ) : (
     <GameRoom
       game={game}
       games={games}
@@ -546,6 +541,15 @@ const HomePage = () => {
       }}
       onSelectProperty={setSelectedProperty}
     />
+  );
+
+  return (
+    <>
+      {pageContent}
+      <footer className="site-footer">
+        <p>&copy; 2026 Srishti Khosla. All rights reserved.</p>
+      </footer>
+    </>
   );
 };
 
