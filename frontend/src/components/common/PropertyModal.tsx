@@ -38,9 +38,6 @@ const PropertyModal = ({
         role="dialog"
         aria-modal="true"
       >
-        <button className="modal-close" onClick={onClose} type="button">
-          x
-        </button>
         <div className={`property-banner property-banner-${property.colour.toLowerCase()}`} />
         <p className="eyebrow">{property.colour} Property</p>
         <h3>{property.name}</h3>

@@ -13,7 +13,6 @@ const GameLogPanel = ({ turns, players }: GameLogPanelProps) => {
     <section className="control-card log-card">
       <div className="panel-header">
         <h2>Game Log</h2>
-        <span className="muted-text">{turns.length} entries</span>
       </div>
 
       {orderedTurns.length > 0 ? (

@@ -76,6 +76,7 @@ const GameRoom = ({
   const isGameOver = Boolean(game && game.status !== 'IN_PROGRESS');
   const [showGameOverModal, setShowGameOverModal] = useState(false);
   const isPending = pendingAction !== null;
+const isRollingDice = loading && game?.status === 'IN_PROGRESS' && !isPending; 
 
   const displayedDiceTotal = isPending
     ? game?.pendingTurnData?.diceRoll ?? null
@@ -215,7 +216,7 @@ const GameRoom = ({
               ) : null}
             </div>
 
-            <DiceDisplay total={displayedDiceTotal} />
+            <DiceDisplay total={displayedDiceTotal} rolling={isRollingDice} />
 
             <p className="dice-note">
               The roll display reflects the same deterministic turn logic already used by

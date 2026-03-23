@@ -1,5 +1,8 @@
+import { useEffect, useRef, useState } from 'react';
+
 type DiceDisplayProps = {
   total: number | null;
+  rolling: boolean;
 };
 
 const DICE_PIP_LAYOUTS: Record<number, string[]> = {
@@ -19,20 +22,46 @@ const getDieFace = (total: number | null) => {
   return Math.max(1, Math.min(6, total));
 };
 
-const DiceDisplay = ({ total }: DiceDisplayProps) => {
-  const dieFace = getDieFace(total);
+const DiceDisplay = ({ total, rolling }: DiceDisplayProps) => {
+  const settledFace = getDieFace(total);
+  const [displayedFace, setDisplayedFace] = useState<number | null>(settledFace);
+  const rollingFaceRef = useRef(1);
+
+  useEffect(() => {
+    if (!rolling) {
+      setDisplayedFace(settledFace);
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      rollingFaceRef.current = rollingFaceRef.current % 6 + 1;
+      setDisplayedFace(rollingFaceRef.current);
+    }, 88);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [rolling, settledFace]);
+
+  const dieFace = displayedFace;
   const pips = dieFace ? DICE_PIP_LAYOUTS[dieFace] : [];
 
   return (
     <div className="dice-row">
-      <div className={`dice-face ${dieFace === null ? 'dice-face-empty' : ''}`}>
-        {pips.map((pipPosition) => (
-          <span
-            key={pipPosition}
-            className={`dice-pip dice-pip-${pipPosition}`}
-            aria-hidden="true"
-          />
-        ))}
+      <div className="dice-stage">
+        <div
+          className={`dice-face ${dieFace === null ? 'dice-face-empty' : ''} ${
+            rolling ? 'dice-face-rolling' : ''
+          }`}
+        >
+          {pips.map((pipPosition) => (
+            <span
+              key={pipPosition}
+              className={`dice-pip dice-pip-${pipPosition}`}
+              aria-hidden="true"
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
