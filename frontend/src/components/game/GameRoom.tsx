@@ -130,10 +130,6 @@ const GameRoom = ({
                   : 'Press Start Game to build the table.'}
               </h2>
             </div>
-            <div className="stage-badge-row">
-              <span className="neutral-badge">4 player table</span>
-              <span className="neutral-badge">Deterministic rolls</span>
-            </div>
           </div>
 
           <div className={`board-stage-grid ${showBoard ? 'board-stage-live' : ''}`}>

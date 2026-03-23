@@ -406,8 +406,7 @@ const HomePage = () => {
         <p className="eyebrow">Woven Monopoly</p>
         <h1>Woven Monopoly</h1>
         <p className="landing-copy">
-          Build your position, buy restaurants automatically when you land on them,
-          and outlast the table with deterministic turn resolution.
+          Build your position. Make your moves. Outlast them all.
         </p>
         <button
           className="primary-button landing-start-button"
@@ -492,7 +491,7 @@ const HomePage = () => {
           <li>Players move using the next value from the game&apos;s predefined roll sequence.</li>
           <li>Landing on an unowned property buys it automatically if the player can afford it.</li>
           <li>Landing on another player&apos;s property pays rent based on ownership and monopoly state.</li>
-          <li>The game ends when a winner is determined by the backend game rules.</li>
+          <li>The game ends when a player becomes bankrupt.</li>
         </ul>
       </section>
     </main>
