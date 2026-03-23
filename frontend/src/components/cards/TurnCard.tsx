@@ -1,6 +1,6 @@
-import type { Player } from '../../../types/player.types';
-import type { Property } from '../../../types/property.types';
-import type { Turn } from '../../../types/turn.types';
+import type { Player } from '../../types/player.types';
+import type { Property } from '../../types/property.types';
+import type { Turn } from '../../types/turn.types';
 
 type TurnCardProps = {
   turn: Turn;
