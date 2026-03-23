@@ -1,0 +1,283 @@
+{
+  "info": {
+    "_postman_id": "71b7f08a-e323-4a25-9b8a-f1eff12dee33",
+    "name": "start game",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48928791",
+    "_collection_link": "https://go.postman.co/collection/48928791-71b7f08a-e323-4a25-9b8a-f1eff12dee33?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "create game",
+      "item": [
+        {
+          "name": "/v1/games",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "read game",
+      "item": [
+        {
+          "name": "/v1/games",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/v1/games/:gameId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games/69c1a09160c5c941edc586c5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games",
+                "69c1a09160c5c941edc586c5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/v1/games/:gameId/players",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games/69c1a09160c5c941edc586c5/players",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games",
+                "69c1a09160c5c941edc586c5",
+                "players"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/v1/games/:gameId/properties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games/69c1a09160c5c941edc586c5/properties",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games",
+                "69c1a09160c5c941edc586c5",
+                "properties"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/v1/games/:gameId/turns",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games/69c1a09160c5c941edc586c5/turns",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games",
+                "69c1a09160c5c941edc586c5",
+                "turns"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "simulate game",
+      "item": [
+        {
+          "name": "/v1/games/:gameId/simulate",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:7777/v1/games/69ba69a6b45dec182f9e9aed/simulate",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "7777",
+              "path": [
+                "v1",
+                "games",
+                "69ba69a6b45dec182f9e9aed",
+                "simulate"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "resolving turns",
+      "item": [
+        {
+          "name": "/v1/games/:gameId/turns/resolve",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games/69c1a09160c5c941edc586c5/turns/resolve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games",
+                "69c1a09160c5c941edc586c5",
+                "turns",
+                "resolve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/v1/games/:gameId/actions/confirm",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games/69c1a09160c5c941edc586c5/actions/confirm",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games",
+                "69c1a09160c5c941edc586c5",
+                "actions",
+                "confirm"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "extra features",
+      "item": [
+        {
+          "name": "/v1/games/:gameId/exit",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games/69c1a2129382574566f53c87/exit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games",
+                "69c1a2129382574566f53c87",
+                "exit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/v1/games/:gameId/resume",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games/69c1a2129382574566f53c87/resume",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games",
+                "69c1a2129382574566f53c87",
+                "resume"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/v1/games/:gameId/restart",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games/69c1a2839382574566f53c9b/restart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games",
+                "69c1a2839382574566f53c9b",
+                "restart"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/v1/games/:gameId/abandon",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/games/69c1a2839382574566f53c9b/abandon",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "games",
+                "69c1a2839382574566f53c9b",
+                "abandon"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
