@@ -418,18 +418,18 @@ button {
 }
 
 .board-pos-6 {
-  grid-column: 1;
-  grid-row: 4;
-}
-
-.board-pos-7 {
   grid-column: 2 / span 2;
   grid-row: 4;
 }
 
-.board-pos-8 {
-  grid-column: 4;
+.board-pos-7 {
+  grid-column: 1;
   grid-row: 4;
+}
+
+.board-pos-8 {
+  grid-column: 1;
+  grid-row: 2 / span 2;
 }
 
 .board-tile:hover {
